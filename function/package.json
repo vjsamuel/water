@@ -1,0 +1,32 @@
+{
+  "name": "cloud-project-1-pubsub-to-cloud-store",
+  "version": "0.0.1",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vjsamuel/CloudProject1.git"
+  },
+  "engines": {
+    "node": ">=4.3.2"
+  },
+  "scripts": {
+    "lint": "samples lint",
+    "pretest": "npm run lint"
+  },
+  "dependencies": {
+    "@google-cloud/pubsub": "0.13.2",
+    "@google-cloud/storage": "1.2.1",
+    "safe-buffer": "5.1.1",
+    "request": "2.81.0"
+  },
+  "devDependencies": {
+    "@google-cloud/nodejs-repo-tools": "1.4.17",
+    "ava": "0.21.0",
+    "proxyquire": "1.8.0",
+    "sinon": "3.2.0"
+  },
+  "cloud-repo-tools": {
+    "requiresKeyFile": true,
+    "requiresProjectId": true
+  }
+}
