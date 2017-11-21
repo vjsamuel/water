@@ -34,18 +34,18 @@ function initMap() {
 app.config(function($routeProvider) {
     $routeProvider
         .when('/home', {
-            templateUrl : '/myfinalangular/partials/home.html',
+            templateUrl : '/partials/home.html',
             controller: 'UploadController'
         })
         .when('/uploads', {
-            templateUrl : '/myfinalangular/partials/uploads.html',
+            templateUrl : '/partials/uploads.html',
             controller: 'ViewUploadsController'
         })
         .when('/map', {
-            templateUrl : '/myfinalangular/partials/map.html'
+            templateUrl : '/partials/map.html'
         })
         .when('/subscribers', {
-            templateUrl : '/myfinalangular/partials/subscribers.html'
+            templateUrl : '/partials/subscribers.html'
         })
 
 });
