@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <script src="/bower_components/angular/angular.js"></script>
+        <script src="/bower_components/angular-route/angular-route.js"></script>
+        <script src="/bower_components/angular-bootstrap/ui-bootstrap.js"></script>
+        <script src="/bower_components/file-saver/FileSaver.js"></script>
+
+        <script src="//apis.google.com/js/platform.js"></script>
+        <link href="//bootswatch.com/3/flatly/bootstrap.min.css" rel="stylesheet">
+
+        <script src="/script.js"></script>
+    </head>
+
+    <body ng-app = "app">
+        <div class="container" ng-controller="MainController">
+            <div>
+                <img src="/images/waterdrop.jpg" alt="water"height="100px" width="200px"/>
+                   <!--<img ng-src="{{water.path}}"
+                         alt="{{ water.name }}"
+                         style="height:100px; width:200px" />-->
+                </div>
+            <div class="page-header" id="banner">
+                <div class="row">
+                    <div class="col-lg-8 col-md-7 col-sm-6">
+                        <h1>Water Finder</h1>
+                        <p class="lead">Better water for more people!</p>
+                    </div>
+                    <div class="col-lg-4 col-md-5 col-sm-6" ng-show="signedin">
+                        <h2>Welcome!!</h2>
+                        <p class="lead">{{username}}!!</p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-3 col-md-3 col-sm-4">
+                        <div class="list-group table-of-contents">
+                            <a class="list-group-item" href="#!/home">Report Water Finding</a>
+                            <a class="list-group-item" href="#!/map">Map</a>
+                            <a class="list-group-item" href="#!/subscribers">Subscribe</a>
+                            <a class="list-group-item" href="#!/uploads">My Uploads</a>
+                            <button class="list-group-item" ng-click="signin()">{{ state }}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div ng-view></div>
+        </div>
+    </body>
+</html>
