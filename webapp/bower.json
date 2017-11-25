@@ -1,0 +1,24 @@
+{
+  "name": "upload.ly",
+  "authors": [
+    "Vijay Samuel <vjsamuel1990@gmail.com>"
+  ],
+  "description": "Upload files to the cloud",
+  "main": "index.html",
+  "license": "MIT",
+  "homepage": "https://github.com/vjsamuel/uploadly",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-route": "^1.6.6",
+    "file-saver": "^1.3.3",
+    "angular-bootstrap": "^2.5.0",
+    "angular": "^1.6.6"
+  }
+}

@@ -1,0 +1,58 @@
+<div class="col-lg-12">
+    <div class="alert alert-dismissible alert-danger" ng-show="show_failure">
+        <button type="button" class="close" data-dismiss="alert" ng-click="close()">&times;</button>
+        <strong>{{message}}.</strong>
+    </div>
+</div>
+
+<div class="alert alert-dismissible alert-success" ng-show="show_success">
+    <button type="button" class="close" data-dismiss="alert" ng-click="close()">&times;</button>
+    <strong>{{message}}.</strong>
+</div>
+<div class="row">
+    <div class="col-lg-12" ng-show="show_table">
+        <legend> Uploads </legend>
+        <div class="bs-component">
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>File</th>
+                    <th></th>
+                    <th>Description</th>
+                    <th>Version</th>
+                    <th>Size</th>
+                    <th>Type</th>
+                    <th>Uploaded</th>
+                    <th>Last Modified</th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="result in results">
+                <tr>
+                    <td>{{$index + 1}}</td>
+                    <td>{{result.file}}</td>
+                    <td>
+                        <div id="index-{{$index}}" class="btn-group" ng-click="open('index-' + $index)">
+                            <button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#!/uploads" ng-click="download(result.file, result.version, result.type)">Download</a></li>
+                                <li><a href="#!/home">Update</a></li>
+
+                                <li class="divider"></li>
+
+                                <li><a href="#!/uploads" style="color:#ff4136" ng-click="delete(result.file)"><strong>Delete</strong></a></li>
+                            </ul>
+                        </div>
+                    </td>
+                    <td>{{result.description !== 'undefined' ? result.description : ''}}</td>
+                    <td>{{result.version}}</td>
+                    <td>{{convert_bytes(result.size)}}</td>
+                    <td>{{result.type}}</td>
+                    <td>{{result.upload_time | date:'medium'}}</td>
+                    <td>{{result.last_modified | date:'medium'}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
