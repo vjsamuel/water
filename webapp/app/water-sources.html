@@ -33,7 +33,7 @@
        var B = A.replace(')', '');
        vm.currentMarker = B;
        alert(vm.currentMarker);
-       }  
+       }
       };
       vm.deleteMarkers = function() {
 
@@ -103,16 +103,17 @@
       </div>
       <ng-map center="current-location" zoom="12" on-click="vm.addMarker()">
 
-     <marker position="current-location"
-          icon="{path:'CIRCLE', scale: 10, strokeColor: 'blue', zIndex:10}"></marker>
+     <marker position="current-location"></marker>
        <marker
           ng-repeat="pos in vm.positions" position="{{pos.lat}}, {{pos.lng}}"
+          icon="{path:'CIRCLE', scale: 10, strokeColor: 'blue', zIndex:10}"
           id="{{pos.index}}" on-click="vm.pinClicked(this)" >
           </marker> 
      <directions id= "id2" draggable="true" panel="directions-panel" travel-mode="DRIVING" origin="current-location" 
            suppress-markers="true"
      destination="{{vm.currentMarker}}"  >
         </directions> 
+        <traffic-layer></traffic-layer>
       </ng-map>
             <!--        -->
     
