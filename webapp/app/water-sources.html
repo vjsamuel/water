@@ -5,7 +5,7 @@
 <script src="script-tags-for-development.js"></script>
 <script>
     var app = angular.module('myApp', ['ngMap']);
-    app.controller('MarkerRemoveCtrl', function(NgMap) {
+    app.controller('WaterSourcer', function(NgMap) {
       var vm = this;
       
       NgMap.getMap().then(map => vm.map = map);
@@ -32,6 +32,7 @@
        var A = s.replace('(', '');
        var B = A.replace(')', '');
        vm.currentMarker = B;
+       alert(vm.currentMarker);
        }  
       };
       vm.deleteMarkers = function() {
@@ -89,7 +90,7 @@
       border: 1px solid #999;
     }
   </style>
-    <div ng-controller="MarkerRemoveCtrl as vm">
+    <div ng-controller="WaterSourcer as vm">
       <br/>
       Click on map to add a water source. Click button to show, hide, or remove markers<br/>
       <div id="panel">
