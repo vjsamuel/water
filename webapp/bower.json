@@ -15,6 +15,11 @@
     "test",
     "tests"
   ],
+  "keywords": [
+    "angularjs",
+    "angularjs-directive",
+    "google-maps"
+  ],
   "dependencies": {
     "angular-route": "^1.6.6",
     "file-saver": "^1.3.3",

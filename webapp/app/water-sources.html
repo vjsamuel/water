@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=yes" />
+<script src="script-tags-for-development.js"></script>
+<script>
+    var app = angular.module('myApp', ['ngMap']);
+    app.controller('MarkerRemoveCtrl', function(NgMap) {
+      var vm = this;
+      
+      NgMap.getMap().then(map => vm.map = map);
+      vm.positions = [{lat:0.0, lng:0.0, index:0}];
+      vm.currentMarker = "";
+      vm.addMarker = function(event) {
+        if (window.confirm("Create a water source?")) {
+
+        vm.currentMarker= "";
+        var ll = event.latLng;
+        len = vm.positions.length;
+        
+        vm.positions.push({lat:ll.lat(), lng: ll.lng(), index: len});
+        }
+      };
+
+      vm.pinClicked = function(events, marker) {
+       if (window.confirm("Want driving directions for this marker?")) {
+       vm.currentMarker = "";
+       var pos = marker.$index;
+       
+       vm.map.setCenter(vm.map.markers[pos].getPosition());
+       var s = vm.map.markers[pos].getPosition().toString(); 
+       var A = s.replace('(', '');
+       var B = A.replace(')', '');
+       vm.currentMarker = B;
+       }  
+      };
+      vm.deleteMarkers = function() {
+
+        vm.positions = [{lat:0.0, lng:0.0, index:0}];
+      };
+      vm.showMarkers = function() {
+        vm.currentMarker = "";
+        for (var key in vm.map.markers) {
+          vm.map.markers[key].setMap(vm.map);
+        };
+
+      };
+      vm.hideMarkers = function() {
+        vm.currentMarker = "";
+        for (var key in vm.map.markers) {
+          vm.map.markers[key].setMap(null);
+        };
+      };
+      vm.showCurrentLocation = function() {
+      
+        alert("resetting map");
+        if (navigator.geolocation) {
+         navigator.geolocation.getCurrentPosition(function(position) {
+            var pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            vm.map.setCenter(pos);
+            vm.map.setZoom(12);
+          }, function() {
+            handleLocationError(true, infoWindow, vm.map.getCenter());
+          });
+          }
+      };
+    });
+</script>
+
+</head>
+
+<body>
+
+  <style>
+    div[ng-controller] {
+      position: relative;
+    }
+    #panel {
+      position: absolute;
+      top: 40px;
+      left: 50%;
+      margin-left: -180px;
+      z-index: 5;
+      background-color: #fff;
+      padding: 5px;
+      border: 1px solid #999;
+    }
+  </style>
+    <div ng-controller="MarkerRemoveCtrl as vm">
+      <br/>
+      Click on map to add a water source. Click button to show, hide, or remove markers<br/>
+      <div id="panel">
+        <input ng-click="vm.hideMarkers()" type=button value="Hide Water resources">
+        <input ng-click="vm.showMarkers()" type=button value="Show Water resources">
+        <input ng-click="vm.deleteMarkers()" type=button value="Delete all Water resources">
+        <input ng-click="vm.showCurrentLocation()" type=button value="Show current location">
+      </div>
+      <ng-map center="current-location" zoom="12" on-click="vm.addMarker()">
+
+     <marker position="current-location"
+          icon="{path:'CIRCLE', scale: 10, strokeColor: 'blue', zIndex:10}"></marker>
+       <marker
+          ng-repeat="pos in vm.positions" position="{{pos.lat}}, {{pos.lng}}"
+          id="{{pos.index}}" on-click="vm.pinClicked(this)" >
+          </marker> 
+     <directions id= "id2" draggable="true" panel="directions-panel" travel-mode="DRIVING" origin="current-location" 
+           suppress-markers="true"
+     destination="{{vm.currentMarker}}"  >
+        </directions> 
+      </ng-map>
+            <!--        -->
+    
+      <div id="directions-panel" style="width: 28%; float:left; height: 100%; overflow: auto; padding: 0px 5px">
+      </div> 
+  <p id = "id3">      </p>
+</body>
+</html>
