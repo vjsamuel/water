@@ -286,7 +286,7 @@ app.controller('MainController', ['$scope', 'User' ,function($scope, User) {
     $scope.initClient = function() {
         gapi.load('auth2', function () {
             $scope.auth2 = gapi.auth2.init({
-                client_id: '383780224553-22egovj732rdubo0fv5tf5fbu37to9ud.apps.googleusercontent.com'
+                client_id: '####'
             });
 
             var instance = gapi.auth2.getAuthInstance();
