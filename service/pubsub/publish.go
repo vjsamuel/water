@@ -50,7 +50,7 @@ func (p *PubSub) Publish(holder common.Holder) error {
 	message := pubsub.Message{
 		Attributes: map[string]string{
 			"name":        holder.Image.File,
-			"id":     holder.Id,
+			"id":          holder.Id,
 			"contentType": holder.Image.ContentType,
 		},
 		Data: bytes,

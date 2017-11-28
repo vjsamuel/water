@@ -32,6 +32,7 @@ type FindingHolder struct {
 }
 
 type Response struct {
+	Id          string             `json:"id"`
 	Images      map[string]File    `json:"images"`
 	Description string             `json:"description"`
 	Comment     string             `json:"comment"`

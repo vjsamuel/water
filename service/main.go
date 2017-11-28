@@ -25,7 +25,7 @@ func main() {
 	source := v1.PathPrefix("/source").Subrouter()
 	source.Path("/{id}").Handler(a.AuthenticatedHandler(h.UpdateFinding)).Methods("PUT")
 	source.Path("/{id}").Handler(a.AuthenticatedHandler(h.DeleteFinding)).Methods("DELETE")
-	source.Path("/{id}").Handler(cache.NoCacheHandler(h.GetFindingInfo)	).Methods("GET")
+	source.Path("/{id}").Handler(cache.NoCacheHandler(h.GetFindingInfo)).Methods("GET")
 
 	pages := v1.PathPrefix("/source/{id}").Subrouter()
 	pages.Path("/image/{image}").HandlerFunc(h.GetImage).Methods("GET")
@@ -34,5 +34,24 @@ func main() {
 	//fs := http.FileServer(http.Dir("../webapp"))
 	//r.Methods("GET").PathPrefix("/").Handler(fs)
 
-	http.ListenAndServe(":8080", r)
+	http.ListenAndServe(":8080", &CorsServer{r})
+}
+
+type CorsServer struct {
+	r *mux.Router
+}
+
+func (s *CorsServer) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+	if origin := req.Header.Get("Origin"); origin != "" {
+		rw.Header().Set("Access-Control-Allow-Origin", origin)
+		rw.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		rw.Header().Set("Access-Control-Allow-Headers",
+			"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	}
+	// Stop here if its Preflighted OPTIONS request
+	if req.Method == "OPTIONS" {
+		return
+	}
+	// Lets Gorilla work
+	s.r.ServeHTTP(rw, req)
 }

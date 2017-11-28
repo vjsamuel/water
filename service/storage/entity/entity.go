@@ -51,21 +51,21 @@ func (e *entityStore) Get(holder common.Holder) (interface{}, error) {
 
 func (e *entityStore) Insert(holder common.Holder) error {
 	record := common.FindingHolder{
-		File: common.File {
-			Size: holder.Image.Size,
-			Type: holder.Image.ContentType,
+		File: common.File{
+			Size:         holder.Image.Size,
+			Type:         holder.Image.ContentType,
 			Version:      1,
 			LastModified: time.Now(),
 			UploadTime:   time.Now(),
 		},
 		Finding: common.Finding{
 			Description: holder.Description,
-			Location: holder.Location,
-			Comment: holder.Comment,
+			Location:    holder.Location,
+			Comment:     holder.Comment,
 		},
 		Profile: common.Profile{
 			FirstName: holder.User.FirstName,
-			LastName: holder.User.LastName,
+			LastName:  holder.User.LastName,
 		},
 	}
 
@@ -82,21 +82,21 @@ func (e *entityStore) Update(holder common.Holder) error {
 	record, _ := rawRecord.(common.Response)
 
 	newRecord := common.FindingHolder{
-		File: common.File {
-			Size: holder.Image.Size,
-			Type: holder.Image.ContentType,
+		File: common.File{
+			Size:         holder.Image.Size,
+			Type:         holder.Image.ContentType,
 			Version:      record.Images[holder.Image.File].Version + 1,
 			LastModified: time.Now(),
 			UploadTime:   record.Images[holder.Image.File].UploadTime,
 		},
 		Finding: common.Finding{
 			Description: holder.Description,
-			Location: holder.Location,
-			Comment: holder.Comment,
+			Location:    holder.Location,
+			Comment:     holder.Comment,
 		},
 		Profile: common.Profile{
 			FirstName: holder.User.FirstName,
-			LastName: holder.User.LastName,
+			LastName:  holder.User.LastName,
 		},
 	}
 
@@ -159,7 +159,7 @@ func (e *entityStore) List(_ common.Holder) (interface{}, error) {
 	return responses, err
 }
 
-func (e* entityStore) listByQuery(query *datastore.Query) ([]common.Response, error) {
+func (e *entityStore) listByQuery(query *datastore.Query) ([]common.Response, error) {
 	entities := []common.Finding{}
 
 	keys, err := e.client.GetAll(e.ctx, query, &entities)
@@ -170,12 +170,13 @@ func (e* entityStore) listByQuery(query *datastore.Query) ([]common.Response, er
 	}
 
 	responses := []common.Response{}
-	for i:=0; i < len(keys); i ++ {
+	for i := 0; i < len(keys); i++ {
 		entity := entities[i]
 		resp := common.Response{
+			Id:          keys[i].Name,
 			Description: entity.Description,
-			Comment: entity.Comment,
-			Location: entity.Location,
+			Comment:     entity.Comment,
+			Location:    entity.Location,
 		}
 
 		imgQuery := datastore.NewQuery(file_kind).Ancestor(keys[0])
@@ -188,7 +189,7 @@ func (e* entityStore) listByQuery(query *datastore.Query) ([]common.Response, er
 		}
 
 		images := map[string]common.File{}
-		for i:=0; i< len(imgKeys); i ++ {
+		for i := 0; i < len(imgKeys); i++ {
 			images[imgKeys[i].Name] = files[i]
 		}
 		resp.Images = images

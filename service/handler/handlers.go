@@ -164,7 +164,7 @@ func (h *handler) SubmitFinding(w http.ResponseWriter, r *http.Request) {
 		Object:      a,
 		Description: description,
 		Comment:     comment,
-		Location: *point,
+		Location:    *point,
 	}
 
 	err = h.psub.Publish(holder)
@@ -238,7 +238,7 @@ func (h *handler) UpdateFinding(w http.ResponseWriter, r *http.Request) {
 		Object:      a,
 		Description: description,
 		Comment:     comment,
-		Image:       common.Image{
+		Image: common.Image{
 			File:        b.Filename,
 			ContentType: contentType,
 			Size:        length,
@@ -369,7 +369,7 @@ func (h *handler) DeleteFinding(w http.ResponseWriter, r *http.Request) {
 	}
 
 	holder := common.Holder{
-		Id: name,
+		Id:   name,
 		User: *usr,
 	}
 
@@ -388,10 +388,10 @@ func (h *handler) DeleteFinding(w http.ResponseWriter, r *http.Request) {
 	resp, _ := rawResp.(common.Response)
 	for k := range resp.Images {
 		tempHolder := common.Holder{
-			Id: holder.Id,
+			Id:   holder.Id,
 			User: holder.User,
 			Image: common.Image{
-				File: 	k,
+				File: k,
 			},
 		}
 		err := h.object.Delete(tempHolder)

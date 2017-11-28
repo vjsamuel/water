@@ -3,12 +3,12 @@ package object
 import (
 	"context"
 	"fmt"
-	"log"
 	"io"
+	"log"
 
 	"cloud.google.com/go/storage"
-	s "github.com/vjsamuel/water/service/storage"
 	"github.com/vjsamuel/water/service/common"
+	s "github.com/vjsamuel/water/service/storage"
 	"google.golang.org/api/iterator"
 )
 
@@ -115,17 +115,15 @@ func (o *objectStore) List(holder common.Holder) (interface{}, error) {
 			return nil, err
 		}
 		resps = append(resps, common.Response{
-			Images: map[string]common.File {
-				attrs.Name : {
-					Version: 1,
+			Images: map[string]common.File{
+				attrs.Name: {
+					Version:      1,
 					LastModified: attrs.Updated,
-					UploadTime: attrs.Created,
-					Size: attrs.Size,
-					Type: attrs.ContentType,
+					UploadTime:   attrs.Created,
+					Size:         attrs.Size,
+					Type:         attrs.ContentType,
 				},
-
 			},
-
 		})
 	}
 

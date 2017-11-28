@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 
+	"time"
+
 	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/vjsamuel/water/service/common"
 )
@@ -39,8 +41,9 @@ func (m *Memcache) Insert(holder common.Holder) error {
 	}
 	key := m.getRecordKey(holder)
 	item := &memcache.Item{
-		Key:   key,
-		Value: bytes,
+		Key:        key,
+		Value:      bytes,
+		Expiration: int32(time.Hour.Seconds()),
 	}
 	err := m.client.Set(item)
 	if err != nil {
