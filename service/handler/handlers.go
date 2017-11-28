@@ -69,10 +69,55 @@ func NewHandler(users *cache.EvictableMap) *handler {
 }
 
 func (h *handler) GetFindings(w http.ResponseWriter, r *http.Request) {
+	usr := h.getUserFromRequest(r)
 	holder := common.Holder{}
+
+	if usr != nil {
+		holder.User = *usr
+	}
+
+	latStr := r.URL.Query().Get("lat")
+	lngStr := r.URL.Query().Get("lng")
+
+	var point *datastore.GeoPoint
+	if latStr != "" && lngStr != "" {
+		dontAdd := false
+		lat, err := strconv.ParseFloat(latStr, 64)
+		if err != nil {
+			dontAdd = true
+			log.Println(fmt.Errorf("latitude information is not a float: %v", err))
+		}
+		long, err := strconv.ParseFloat(lngStr, 64)
+		if err != nil {
+			dontAdd = true
+			log.Println(fmt.Errorf("longitude information is not a float: %v", err))
+		}
+
+		if dontAdd == false {
+			point = &datastore.GeoPoint{
+				Lat: lat,
+				Lng: long,
+			}
+		}
+	}
+
+	if point != nil && point.Valid() == false {
+		point = nil
+	}
+
+	distStr := r.URL.Query().Get("dist")
+	dist, err := strconv.ParseUint(distStr, 10, 64)
+	if err != nil {
+		dist = 0
+	}
 
 	if rawResp, _ := h.mcache.GetList(holder); rawResp != nil {
 		bytes, _ := rawResp.([]byte)
+		responses := []common.Response{}
+		json.Unmarshal(bytes, &responses)
+
+		responses = h.filterByDistance(responses, dist, point)
+		bytes, _ = json.Marshal(responses)
 		fmt.Fprintf(w, "%s", string(bytes))
 		return
 	}
@@ -98,6 +143,8 @@ func (h *handler) GetFindings(w http.ResponseWriter, r *http.Request) {
 	holder.Object = bytes
 	h.mcache.InsertList(holder)
 
+	resp = h.filterByDistance(resp, dist, point)
+	bytes, _ = json.Marshal(resp)
 	fmt.Fprintf(w, "%s", string(bytes))
 }
 
@@ -139,11 +186,6 @@ func (h *handler) SubmitFinding(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-
-	reader := r.Body
-	bytes, _ := ioutil.ReadAll(reader)
-	fmt.Println(string(bytes))
-
 	contentType := b.Header.Get("Content-Type")
 
 	id, err := h.s.NextID()
@@ -456,4 +498,20 @@ func (h *handler) getGeoPoint(w http.ResponseWriter, latlongStr string) (*datast
 	}
 
 	return point, nil
+}
+
+func (h *handler) filterByDistance(responses []common.Response, dist uint64, point *datastore.GeoPoint) []common.Response {
+	if dist == 0 || point == nil {
+		return responses
+	}
+
+	output := []common.Response{}
+	for _, resp := range responses {
+		fmt.Println(common.Distance(resp.Location, *point))
+		if common.Distance(resp.Location, *point) <= float64(dist) {
+			output = append(output, resp)
+		}
+	}
+
+	return output
 }

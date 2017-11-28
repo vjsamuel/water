@@ -153,8 +153,13 @@ func (e *entityStore) Exists(holder common.Holder) bool {
 	return false
 }
 
-func (e *entityStore) List(_ common.Holder) (interface{}, error) {
+func (e *entityStore) List(holder common.Holder) (interface{}, error) {
 	query := datastore.NewQuery(finding_kind)
+	if holder.GetProfileID() != "" {
+		parent := datastore.NameKey(profile_kind, holder.GetProfileID(), nil)
+		query = query.Ancestor(parent)
+	}
+
 	responses, err := e.listByQuery(query)
 	return responses, err
 }
