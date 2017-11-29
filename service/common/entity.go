@@ -10,6 +10,7 @@ type Finding struct {
 	Description string             `datastore:"description"`
 	Comment     string             `datastore:"comment"`
 	Location    datastore.GeoPoint `datastore:"location"`
+	ID          string             `datastore:"id"`
 }
 
 type Profile struct {

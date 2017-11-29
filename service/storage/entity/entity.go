@@ -34,8 +34,7 @@ func NewEntityStorage(projectId string, ctx context.Context) s.Storage {
 }
 
 func (e *entityStore) Get(holder common.Holder) (interface{}, error) {
-	key := datastore.NameKey(finding_kind, holder.Id, nil)
-	query := datastore.NewQuery(finding_kind).Filter("__key__ >", key)
+	query := datastore.NewQuery(finding_kind).Filter("id =", holder.Id)
 	responses, err := e.listByQuery(query)
 
 	if len(responses) > 1 {
@@ -62,6 +61,7 @@ func (e *entityStore) Insert(holder common.Holder) error {
 			Description: holder.Description,
 			Location:    holder.Location,
 			Comment:     holder.Comment,
+			ID:          holder.Id,
 		},
 		Profile: common.Profile{
 			FirstName: holder.User.FirstName,
@@ -93,6 +93,7 @@ func (e *entityStore) Update(holder common.Holder) error {
 			Description: holder.Description,
 			Location:    holder.Location,
 			Comment:     holder.Comment,
+			ID:          holder.Id,
 		},
 		Profile: common.Profile{
 			FirstName: holder.User.FirstName,
@@ -178,7 +179,7 @@ func (e *entityStore) listByQuery(query *datastore.Query) ([]common.Response, er
 	for i := 0; i < len(keys); i++ {
 		entity := entities[i]
 		resp := common.Response{
-			Id:          keys[i].Name,
+			Id:          entity.ID,
 			Description: entity.Description,
 			Comment:     entity.Comment,
 			Location:    entity.Location,

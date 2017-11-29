@@ -198,7 +198,7 @@ func (h *handler) SubmitFinding(w http.ResponseWriter, r *http.Request) {
 	holder := common.Holder{
 		Id: fmt.Sprintf("%d", id),
 		Image: common.Image{
-			File:        b.Filename,
+			File:        fmt.Sprintf("%d-%s", id, b.Filename),
 			ContentType: contentType,
 			Size:        length,
 		},
@@ -281,7 +281,7 @@ func (h *handler) UpdateFinding(w http.ResponseWriter, r *http.Request) {
 		Description: description,
 		Comment:     comment,
 		Image: common.Image{
-			File:        b.Filename,
+			File:        fmt.Sprintf("%d-%s", id, b.Filename),
 			ContentType: contentType,
 			Size:        length,
 		},
