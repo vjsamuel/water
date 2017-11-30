@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ui.bootstrap', 'ngRoute']);
+var app = angular.module('app', ['ui.bootstrap', 'ngRoute', 'ngMap']);
 
 app.controller('myCtrl', ['$scope', function($scope) {
     $scope.count = 0;
@@ -9,7 +9,7 @@ app.controller('myCtrl', ['$scope', function($scope) {
 }]);
 
 //image
-    app.controller("MainController", function ($scope) {
+    app.controller("MainController", function ($scope, NgMap) {
         var water = {
             name: "Waterdrop",
             path: "/Images/waterdrop.jpg"
@@ -42,7 +42,8 @@ app.config(function($routeProvider) {
             controller: 'ViewUploadsController'
         })
         .when('/map', {
-            templateUrl : '/partials/map.html'
+            templateUrl : '/partials/watermap.html',
+            controller: 'MapController'
         })
         .when('/subscribers', {
             templateUrl : '/partials/subscribers.html'
@@ -176,6 +177,15 @@ app.service('fileMeta', ['$http', function($http) {
 
 ]);
 
+app.controller('MapController', ['$scope', 'fileOps' ,function($scope, NgMap) {
+   NgMap.getMap().then(function(map) {
+    console.log(map.getCenter());
+    console.log('markers', map.markers);
+    console.log('shapes', map.shapes);
+  }); 
+    
+    }]);
+
 app.controller('UploadController', ['$scope', 'fileOps', 'fileMeta', 'User' ,function($scope, fileOps, fileMeta, User) {
     $scope.empty = {};
 
@@ -286,9 +296,26 @@ app.controller('ViewUploadsController', ['$scope', 'fileOps', 'fileMeta', 'User'
 const LogIn = 'Log in';
 const LogOut = 'Log out';
 
-app.controller('MainController', ['$scope', 'User' ,function($scope, User) {
+app.controller('MainController', ['$scope','fileOps', 'fileMeta', 'User',function($scope, fileOps, fileMeta, User,  NgMap) {
     $scope.state = LogIn;
     $scope.signedin = false;
+
+    $scope.positions = [{lat:0.0, lng:0.0, index:0}];
+
+
+    $scope.getAllWaterSources = function(event) {
+      alert('running here'); 
+     fileMeta.getFiles().then(function(success) {
+            $scope.positions = success.data;
+            alert('success');
+        }, function() {
+            $scope.message = "Unable to list uploaded files. Please try logging in and try again.";
+            $scope.show_failure = true;
+            alert('failire');
+        });
+
+   };
+    
     $scope.initClient = function() {
         gapi.load('auth2', function () {
             $scope.auth2 = gapi.auth2.init({
@@ -319,6 +346,7 @@ app.controller('MainController', ['$scope', 'User' ,function($scope, User) {
     };
 
     $scope.signin = function() {
+      alert('entering signgin');
         if ($scope.state === LogIn) {
             $scope.auth2.signIn().then(
                 function(user) {
@@ -339,6 +367,6 @@ app.controller('MainController', ['$scope', 'User' ,function($scope, User) {
     $scope.initClient()
 
 
-
+  // ng-map
 
 }]);
