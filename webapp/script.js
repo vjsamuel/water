@@ -90,8 +90,9 @@ app.service('fileOps', ['$http', function ($http) {
         var fd = new FormData();
         alert('trying to upload water source');
         fd.append('file', file.file);
-        fd.append('description', "");
-        fd.append('comment', "");
+        alert(file.file);
+        fd.append('description', '');
+        fd.append('comment', '');
         fd.append('location', locationStr);
         alert('location' + locationStr);
         var uploadUrl = "http://localhost:8080/api/v1/water/sources";
@@ -143,6 +144,14 @@ app.service('fileOps', ['$http', function ($http) {
         })
     };
 
+    this.getAllSources = function() {
+      var urlPath = "http://localhost:8080/api/v1/water/sources";
+      return $http({
+            url: urlPath,
+            method: 'GET'
+          })
+    };
+
     this.getFile = function(file, version, type, token){
         var filePath = "http://localhost:8080/api/v1/water/sources" + file;
         return $http({
@@ -161,13 +170,12 @@ app.service('fileOps', ['$http', function ($http) {
 }]);
 
 app.service('fileMeta', ['$http', function($http) {
-    this.getFiles = function(token) {
+    this.getFiles = function() {
         var filePath = "http://localhost:8080/api/v1/water/sources";
         return $http({
             url: filePath,
             method: 'GET',
             headers: {
-                'X-CloudProject-Token': token,
                 'Content-Type': 'application/json'
             }
         })
@@ -194,7 +202,7 @@ app.controller('UploadController', ['$scope', 'fileOps', 'fileMeta', 'User' ,fun
         alert('i am here');
         alert('i am here 2');
         var token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjYxNGQwZWQ5M2QzOWZiZjFiYzE4NDc5M2RhMDgwMWQ0MGY0MGI4MjIifQ.eyJhenAiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDg4MTgwOTY0MDc1NTMzMDI1MjQiLCJhdF9oYXNoIjoiaDZpZ2dYNUU4ZWgtYWJ5RFJ6VGhFUSIsImlzcyI6Imh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbSIsImlhdCI6MTUxMjAwOTAwNCwiZXhwIjoxNTEyMDEyNjA0LCJuYW1lIjoiU3dldGhhIENoYW5kcmFzZWthciIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vLW1xZVRBSll4STFZL0FBQUFBQUFBQUFJL0FBQUFBQUFBQUFBL0FGaVlvZjF3ai1yTW82ZDkxS1FQZXI3Sm1vTnE2VkdWQVEvczk2LWMvcGhvdG8uanBnIiwiZ2l2ZW5fbmFtZSI6IlN3ZXRoYSIsImZhbWlseV9uYW1lIjoiQ2hhbmRyYXNla2FyIiwibG9jYWxlIjoiZW4ifQ.cQ_e67ccc5BLS_KB8P8Jhl-IvoWdNqPyYMPq7rGkS9tm2AKQiAAkurOuxRW0Pq3yFsk7X9TmY7kTrKZ-Sp4yxc8KDcF4xqNs6aZTypLOLjVBGZZSbPObk3Eo-mtnxzwiRncXVjE8EmUQf9Oh3CkLewe69hmh8QX-pBTUGnf4EocYM6vqmYYFMvtDyim72jn8Uy1ODz4yQ7FjJRuRLwq-rS_Z6kEhp4uqfEIjFrIdgxs8e1J_5eXKgaKzAZopIma_XAm0YEw4J56u9KdGrokusBa_0sNNvgWNjmDnZ8RoxLdLl7tRNAyXF4rLm05uuf_shGomemxxv-xf-K2KtQ2PPw";
-        token = User.getToken(); 
+      //  token = User.getToken(); 
         alert(token);
         var file = $scope.file;
         var locationStr = $scope.location;
@@ -202,12 +210,13 @@ app.controller('UploadController', ['$scope', 'fileOps', 'fileMeta', 'User' ,fun
           alert('file uploaded successfully');
            $scope.message = file.file.name + " updated successfully.";
             $scope.show_success = true;
-          }, function(response,error) {
+          }, function(error) {
+
+          alert('file upload failure');
           alert(error);
           alert(error.status);
-          alert(response);
-          alert('file upload failure');
           $scope.show_failure = true;
+          $scope.message = error.status;
           });
 
     };
@@ -231,7 +240,7 @@ app.controller('ViewUploadsController', ['$scope', 'fileOps', 'fileMeta', 'User'
     });
 
     $scope.show_uploads = function() {
-        fileMeta.getFiles(User.getToken()).then(function(success) {
+        fileMeta.getFiles().then(function(success) {
             $scope.show_table = true;
             $scope.results = success.data;
         }, function() {
