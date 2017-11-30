@@ -1,12 +1,12 @@
 var app = angular.module('app', ['ui.bootstrap', 'ngRoute']);
 
-    app.controller('myCtrl', ['$scope', function($scope) {
-        $scope.count = 0;
-        $scope.myFunc = function() {
-            $scope.count++;
+app.controller('myCtrl', ['$scope', function($scope) {
+    $scope.count = 0;
+    $scope.myFunc = function() {
+        $scope.count++;
 
-        };
-    }]);
+    };
+}]);
 
 //image
     app.controller("MainController", function ($scope) {
@@ -86,15 +86,39 @@ app.directive('fileModel', ['$parse', function ($parse) {
 }]);
 
 app.service('fileOps', ['$http', function ($http) {
+     this.uploadWaterSource = function(file, locationStr, token) {
+        var fd = new FormData();
+        alert('trying to upload water source');
+        fd.append('file', file.file);
+        fd.append('description', "");
+        fd.append('comment', "");
+        fd.append('location', locationStr);
+        alert('location' + locationStr);
+        var uploadUrl = "http://localhost:8080/api/v1/water/sources";
+        var uploadMethod = "POST";
+        alert(token);
+        return $http({
+            url: uploadUrl,
+            data: fd,
+            method: uploadMethod,
+            transformRequest: angular.identity,
+            headers: {
+                'x-cloudproject-token' : token,
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+    };
+
     this.uploadFile = function(file, update, token) {
         var fd = new FormData();
         fd.append('file', file.file);
         fd.append('description', file.description);
-        var uploadUrl = "/api/v1/files";
+        var uploadUrl = "http://localhost:8080/api/v1/water/sources";
         var uploadMethod = "POST";
-        if (update === true) {
+        if (update == true) {
             uploadMethod = "PUT";
         }
+        alert(token);
         return $http({
             url: uploadUrl,
             data: fd,
@@ -108,7 +132,7 @@ app.service('fileOps', ['$http', function ($http) {
     };
 
     this.deleteFile = function(file, token){
-        var filePath = "/api/v1/file/" + file;
+        var filePath = "http://localhost:8080/api/v1/water/source/" + file;
         return $http({
             url: filePath,
             method: 'DELETE',
@@ -120,7 +144,7 @@ app.service('fileOps', ['$http', function ($http) {
     };
 
     this.getFile = function(file, version, type, token){
-        var filePath = "/api/v1/file/" + file;
+        var filePath = "http://localhost:8080/api/v1/water/sources" + file;
         return $http({
             url: filePath,
             method: 'GET',
@@ -137,20 +161,8 @@ app.service('fileOps', ['$http', function ($http) {
 }]);
 
 app.service('fileMeta', ['$http', function($http) {
-    this.getFileInfo = function(name, token) {
-        var filePath = "/api/v1/file/" + name + "/info";
-        return $http({
-            url: filePath,
-            method: 'GET',
-            headers: {
-                'X-CloudProject-Token': token,
-                'Content-Type': 'application/json'
-            }
-        })
-    };
-
     this.getFiles = function(token) {
-        var filePath = "/api/v1/files";
+        var filePath = "http://localhost:8080/api/v1/water/sources";
         return $http({
             url: filePath,
             method: 'GET',
@@ -179,31 +191,24 @@ app.controller('UploadController', ['$scope', 'fileOps', 'fileMeta', 'User' ,fun
     };
 
     $scope.upload = function() {
+        alert('i am here');
+        alert('i am here 2');
+        var token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjYxNGQwZWQ5M2QzOWZiZjFiYzE4NDc5M2RhMDgwMWQ0MGY0MGI4MjIifQ.eyJhenAiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDg4MTgwOTY0MDc1NTMzMDI1MjQiLCJhdF9oYXNoIjoiaDZpZ2dYNUU4ZWgtYWJ5RFJ6VGhFUSIsImlzcyI6Imh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbSIsImlhdCI6MTUxMjAwOTAwNCwiZXhwIjoxNTEyMDEyNjA0LCJuYW1lIjoiU3dldGhhIENoYW5kcmFzZWthciIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vLW1xZVRBSll4STFZL0FBQUFBQUFBQUFJL0FBQUFBQUFBQUFBL0FGaVlvZjF3ai1yTW82ZDkxS1FQZXI3Sm1vTnE2VkdWQVEvczk2LWMvcGhvdG8uanBnIiwiZ2l2ZW5fbmFtZSI6IlN3ZXRoYSIsImZhbWlseV9uYW1lIjoiQ2hhbmRyYXNla2FyIiwibG9jYWxlIjoiZW4ifQ.cQ_e67ccc5BLS_KB8P8Jhl-IvoWdNqPyYMPq7rGkS9tm2AKQiAAkurOuxRW0Pq3yFsk7X9TmY7kTrKZ-Sp4yxc8KDcF4xqNs6aZTypLOLjVBGZZSbPObk3Eo-mtnxzwiRncXVjE8EmUQf9Oh3CkLewe69hmh8QX-pBTUGnf4EocYM6vqmYYFMvtDyim72jn8Uy1ODz4yQ7FjJRuRLwq-rS_Z6kEhp4uqfEIjFrIdgxs8e1J_5eXKgaKzAZopIma_XAm0YEw4J56u9KdGrokusBa_0sNNvgWNjmDnZ8RoxLdLl7tRNAyXF4rLm05uuf_shGomemxxv-xf-K2KtQ2PPw";
+        token = User.getToken(); 
+        alert(token);
         var file = $scope.file;
-        fileMeta.getFileInfo(file.file.name, User.getToken()).then(function() {
-            fileOps.uploadFile(file, true, User.getToken()).then(function() {
-                $scope.message = file.file.name + " updated successfully.";
-                $scope.show_success = true;
-            }, function() {
-                $scope.message = file.file.name + " update failed. Please try logging in and try again.";
-                $scope.show_failure = true;
-            });
-        }, function() {
-            fileOps.uploadFile(file, false, User.getToken()).then(function() {
-                $scope.message = file.file.name + " uploaded successfully.";
-                $scope.show_success = true;
-            }, function(error) {
-                if (error.status ==  403) {
-                    $scope.message = file.file.name + " upload failed. Please login and try again.";
-                } else if (error.status == 400) {
-                    $scope.message = file.file.name + " upload failed as file is bigger than 10MB."
-                } else {
-                    $scope.message = file.file.name + " upload failed. Please try again."
-                }
-
-                $scope.show_failure = true;
-            });
-        })
+        var locationStr = $scope.location;
+        fileOps.uploadWaterSource(file, locationStr, token).then(function() { 
+          alert('file uploaded successfully');
+           $scope.message = file.file.name + " updated successfully.";
+            $scope.show_success = true;
+          }, function(response,error) {
+          alert(error);
+          alert(error.status);
+          alert(response);
+          alert('file upload failure');
+          $scope.show_failure = true;
+          });
 
     };
 
