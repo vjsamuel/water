@@ -21,15 +21,15 @@
 
             <div class="form-group">
                 <label for="Name" class="control-label">Location:</label>
-                <input type="text" class="form-control input-sm" id="location" file-model="location">
+                <input type="text" class="form-control input-sm" ng-model="location" id="location" file-model="location">
             </div>
 
                 <div class="form-group">
-                    <label for="file" class="control-label"> Upload Photo</label>
+                    <label for="file" class="control-label"> Upload Photo of the location</label>
                     <input type="file" class="form-control input-sm" id="file" file-model="file.file">
                 </div>
                 <div class="form-group">
-                    <label for="description" class="control-label">Photo Description</label>
+                    <label for="description" class="control-label">Location Description</label>
                     <input type="text" class="form-control" id="description" ng-model="file.description" placeholder="optional description">
                 </div>
 
