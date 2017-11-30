@@ -144,15 +144,7 @@ app.service('fileOps', ['$http', function ($http) {
         })
     };
 
-    this.getAllSources = function() {
-      var urlPath = "http://localhost:8080/api/v1/water/sources";
-      return $http({
-            url: urlPath,
-            method: 'GET'
-          })
-    };
-
-    this.getFile = function(file, version, type, token){
+       this.getFile = function(file, version, type, token){
         var filePath = "http://localhost:8080/api/v1/water/sources" + file;
         return $http({
             url: filePath,
