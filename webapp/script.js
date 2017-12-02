@@ -105,7 +105,7 @@ app.service('fileOps', ['$http', function ($http) {
             transformRequest: angular.identity,
             headers: {
                 'x-cloudproject-token' : token,
-                'Content-Type': 'multipart/form-data'
+                'Content-Type': undefined
             }
         })
     };
@@ -202,8 +202,8 @@ app.controller('UploadController', ['$scope', 'fileOps', 'fileMeta', 'User' ,fun
     $scope.upload = function() {
         alert('i am here');
         alert('i am here 2');
-        var token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjYxNGQwZWQ5M2QzOWZiZjFiYzE4NDc5M2RhMDgwMWQ0MGY0MGI4MjIifQ.eyJhenAiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDg4MTgwOTY0MDc1NTMzMDI1MjQiLCJhdF9oYXNoIjoiaDZpZ2dYNUU4ZWgtYWJ5RFJ6VGhFUSIsImlzcyI6Imh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbSIsImlhdCI6MTUxMjAwOTAwNCwiZXhwIjoxNTEyMDEyNjA0LCJuYW1lIjoiU3dldGhhIENoYW5kcmFzZWthciIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vLW1xZVRBSll4STFZL0FBQUFBQUFBQUFJL0FBQUFBQUFBQUFBL0FGaVlvZjF3ai1yTW82ZDkxS1FQZXI3Sm1vTnE2VkdWQVEvczk2LWMvcGhvdG8uanBnIiwiZ2l2ZW5fbmFtZSI6IlN3ZXRoYSIsImZhbWlseV9uYW1lIjoiQ2hhbmRyYXNla2FyIiwibG9jYWxlIjoiZW4ifQ.cQ_e67ccc5BLS_KB8P8Jhl-IvoWdNqPyYMPq7rGkS9tm2AKQiAAkurOuxRW0Pq3yFsk7X9TmY7kTrKZ-Sp4yxc8KDcF4xqNs6aZTypLOLjVBGZZSbPObk3Eo-mtnxzwiRncXVjE8EmUQf9Oh3CkLewe69hmh8QX-pBTUGnf4EocYM6vqmYYFMvtDyim72jn8Uy1ODz4yQ7FjJRuRLwq-rS_Z6kEhp4uqfEIjFrIdgxs8e1J_5eXKgaKzAZopIma_XAm0YEw4J56u9KdGrokusBa_0sNNvgWNjmDnZ8RoxLdLl7tRNAyXF4rLm05uuf_shGomemxxv-xf-K2KtQ2PPw";
-      //  token = User.getToken(); 
+        //var token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY4MjQxMjMxYmJmMGRmOGY5MTIzZDAxOGNmOWU2MDFlMmFhMzY3M2EifQ.eyJhenAiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDg4MTgwOTY0MDc1NTMzMDI1MjQiLCJhdF9oYXNoIjoiTS1UVmUxUlhtNzg2MlhXZFROY2FpdyIsImlzcyI6Imh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbSIsImlhdCI6MTUxMjI1NTIzNywiZXhwIjoxNTEyMjU4ODM3LCJuYW1lIjoiU3dldGhhIENoYW5kcmFzZWthciIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vLW1xZVRBSll4STFZL0FBQUFBQUFBQUFJL0FBQUFBQUFBQUFBL0FGaVlvZjF3ai1yTW82ZDkxS1FQZXI3Sm1vTnE2VkdWQVEvczk2LWMvcGhvdG8uanBnIiwiZ2l2ZW5fbmFtZSI6IlN3ZXRoYSIsImZhbWlseV9uYW1lIjoiQ2hhbmRyYXNla2FyIiwibG9jYWxlIjoiZW4ifQ.LNZfW3dHxc4x-J6YooFqrb2ybpobem6WoOxztE0AOMlrQIBSpYhSn6yUYsF7F4xgEDXLZFLG6qlLPBmQmeKeEMiDB85JRZ9dI6lbgqm-Hq1arqQCK58W3037c2MCwlvp7YwcssXtjRvJtDa0MArgBPVGJlGJ1zc6hluc_NtqOQxpa4-vD0h3Vgc2iiwEY-YeHNI5UZyIKFLrRgEthJCb4nrjkta3h9dexNizcnlYTph3BlyCVo8mb6G60NFQXcMc_iZNnzMcdg7uyui2vSdm5j82HC9smN-1YtfJjXXf9dPh_GuMOwHWAH_zn_lZNQ-xF9ors8k9grdIVDQVvBPMHg";
+        var token = User.getToken(); 
         alert(token);
         var file = $scope.file;
         var locationStr = $scope.location;
