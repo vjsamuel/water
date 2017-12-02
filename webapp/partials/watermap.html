@@ -1,7 +1,9 @@
-<h1>hii</h1>
-<input type=button ng-click="getAllWaterSources()" value="Get all water sources"/>
-<ng-map center="current-location" zoom="12" ng-init="getAllWaterSources()">
-<marker position="current-location"></marker>
+<input type=button ng-click="getAllWaterSources()" value="Refresh to get all recent water sources"/>
+<br/>Address : <input ng-model="address" />
+
+<ng-map center="{{address}}" zoom="12" ng-init="getAllWaterSources()">
+
+<marker position="{{address}}"></marker>
 
 <marker
       ng-repeat="pos in positions" position="{{pos.location.Lat}}, {{pos.location.Lng}}"

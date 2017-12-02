@@ -291,6 +291,7 @@ app.controller('MainController', ['$scope','fileOps', 'fileMeta', 'User',functio
     $scope.state = LogIn;
     $scope.signedin = false;
 
+    $scope.address = "current-location";
     $scope.positions = [];
 
 
@@ -337,7 +338,6 @@ app.controller('MainController', ['$scope','fileOps', 'fileMeta', 'User',functio
     };
 
     $scope.signin = function() {
-      alert('entering signgin');
         if ($scope.state === LogIn) {
             $scope.auth2.signIn().then(
                 function(user) {
