@@ -1,2 +1,14 @@
-<ng-map center="37.3,-112.12" zoom="12"></ng-map> 
+<h1>hii</h1>
+<input type=button ng-click="getAllWaterSources()" value="Get all water sources"/>
+<ng-map center="current-location" zoom="12" ng-init="getAllWaterSources()">
+<marker position="current-location"></marker>
+
+<marker
+      ng-repeat="pos in positions" position="{{pos.location.Lat}}, {{pos.location.Lng}}"
+  icon="{path:'CIRCLE', scale: 10, strokeColor: 'blue', zIndex:10}"
+  id="{{pos.id}}" >
+</marker> 
+
+<traffic-layer></traffic-layer>
+</ng-map> 
 

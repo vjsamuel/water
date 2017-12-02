@@ -42,8 +42,7 @@ app.config(function($routeProvider) {
             controller: 'ViewUploadsController'
         })
         .when('/map', {
-            templateUrl : '/partials/watermap.html',
-            controller: 'MapController'
+            templateUrl : '/partials/watermap.html'
         })
         .when('/subscribers', {
             templateUrl : '/partials/subscribers.html'
@@ -177,14 +176,6 @@ app.service('fileMeta', ['$http', function($http) {
 
 ]);
 
-app.controller('MapController', ['$scope', 'fileOps' ,function($scope, NgMap) {
-   NgMap.getMap().then(function(map) {
-    console.log(map.getCenter());
-    console.log('markers', map.markers);
-    console.log('shapes', map.shapes);
-  }); 
-    
-    }]);
 
 app.controller('UploadController', ['$scope', 'fileOps', 'fileMeta', 'User' ,function($scope, fileOps, fileMeta, User) {
     $scope.empty = {};
@@ -300,7 +291,7 @@ app.controller('MainController', ['$scope','fileOps', 'fileMeta', 'User',functio
     $scope.state = LogIn;
     $scope.signedin = false;
 
-    $scope.positions = [{lat:0.0, lng:0.0, index:0}];
+    $scope.positions = [];
 
 
     $scope.getAllWaterSources = function(event) {

@@ -46,18 +46,6 @@
             </div>
 
             <div ng-view></div>
-            <input type=button ng-click="getAllWaterSources()" value="Get all water sources"/>
-            <ng-map center="current-location" zoom="12" ng-init="getAllWaterSources()" ng-click="getAllWaterSources()">
-            <marker position="current-location"></marker>
-
-            <marker
-              ng-repeat="pos in positions" position="{{pos.location.Lat}}, {{pos.location.Lng}}"
-          icon="{path:'CIRCLE', scale: 10, strokeColor: 'blue', zIndex:10}"
-          id="{{pos.id}}" >
-       </marker> 
-
-            <traffic-layer></traffic-layer>
-            </ng-map> 
-        </div>
+     </div>
     </body>
 </html>
