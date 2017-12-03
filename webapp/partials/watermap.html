@@ -1,56 +1,52 @@
-
 <div style="width: 70%; float:left; height: 100%">
 <div class="form-group">
-
-<label for="address" class="control-label">Type an address to navigate to particular location</label>
-<input ng-model="address" />
+  <label for="address" class="control-label">Type an address to navigate to particular location</label>
+  <input ng-model="address" />
 </div> 
 <ng-map center="{{address}}" zoom="12" ng-init="getAllWaterSources()">
+  <marker position="{{address}}"></marker>
+  <marker
+    ng-repeat="pos in positions" position="{{pos.data.location.Lat}}, {{pos.data.location.Lng}}"
+    icon="{path:'CIRCLE', scale: 10, strokeColor: 'blue', zIndex:10}"
+    id="{{pos.index}}" on-click="getMarkerInfo(this)">
+  </marker> 
 
-<marker position="{{address}}"></marker>
-
-<marker
-  ng-repeat="pos in positions" position="{{pos.data.location.Lat}}, {{pos.data.location.Lng}}"
-  icon="{path:'CIRCLE', scale: 10, strokeColor: 'blue', zIndex:10}"
-  id="{{pos.index}}" on-click="getMarkerInfo(this)">
-</marker> 
-
-<traffic-layer></traffic-layer>
+  <traffic-layer></traffic-layer>
 </ng-map> 
 </div>
 <div style="width: 30%; float:right; height: 100%">
-<input type=button class="btn btn-default" ng-click="getAllWaterSources()" value="Click to Refresh"/>
-<div ng-if="showInfo">
-<table ng-if = "showInfo">
-  <tr>
-    <td>
-      <img src = "{{image}}" height = "300" width = "300" border=10 alt="photo of the location uploaded by user"> </td>
-    </td>
-  </tr>
-  <tr>
-    <td>
-    Description: 
-      <label class="control-label">
-        {{description}} 
-      </label>
-    </td>
-  </tr>
-  <tr>
-    <td>
-    Comment:
-      <label class="control-label">
-        {{comment}} 
-      </label>
-    </td>
-  </tr>
-  <tr> 
-    <td>
-    Location:
-     <label class="control-label">
-        {{lat}},{{lng}}
-      </label>
-    </td>
-  </tr>
-</table>
+  <input type=button class="btn btn-default" ng-click="getAllWaterSources()" value="Click to Refresh"/>
+  <div ng-if="showInfo">
+  <table ng-if = "showInfo">
+    <tr>
+      <td>
+        <img src = "{{image}}" height = "300" width = "300" border=10 alt="photo of the location uploaded by user"> </td>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      Description: 
+        <label class="control-label">
+          {{description}} 
+        </label>
+      </td>
+    </tr>
+    <tr>
+      <td>
+      Comment:
+        <label class="control-label">
+          {{comment}} 
+        </label>
+      </td>
+    </tr>
+    <tr> 
+      <td>
+      Location:
+       <label class="control-label">
+          {{lat}},{{lng}}
+        </label>
+      </td>
+    </tr>
+  </table>
 </div>
 </div>
