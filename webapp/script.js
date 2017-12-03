@@ -88,16 +88,16 @@ app.directive('fileModel', ['$parse', function ($parse) {
 app.service('fileOps', ['$http', function ($http) {
      this.uploadWaterSource = function(file, locationStr, token) {
         var fd = new FormData();
-        alert('trying to upload water source');
+       // alert('trying to upload water source');
         fd.append('file', file.file);
-        alert(file.file);
+       // alert(file.file);
         fd.append('description', '');
         fd.append('comment', '');
         fd.append('location', locationStr);
-        alert('location' + locationStr);
+      //  alert('location' + locationStr);
         var uploadUrl = "http://localhost:8080/api/v1/water/sources";
         var uploadMethod = "POST";
-        alert(token);
+       // alert(token);
         return $http({
             url: uploadUrl,
             data: fd,
@@ -119,7 +119,7 @@ app.service('fileOps', ['$http', function ($http) {
         if (update == true) {
             uploadMethod = "PUT";
         }
-        alert(token);
+       // alert(token);
         return $http({
             url: uploadUrl,
             data: fd,
@@ -200,11 +200,9 @@ app.controller('UploadController', ['$scope', 'fileOps', 'fileMeta', 'User' ,fun
     };
 
     $scope.upload = function() {
-        alert('i am here');
-        alert('i am here 2');
+       // alert('i am here');
         //var token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY4MjQxMjMxYmJmMGRmOGY5MTIzZDAxOGNmOWU2MDFlMmFhMzY3M2EifQ.eyJhenAiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDg4MTgwOTY0MDc1NTMzMDI1MjQiLCJhdF9oYXNoIjoiTS1UVmUxUlhtNzg2MlhXZFROY2FpdyIsImlzcyI6Imh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbSIsImlhdCI6MTUxMjI1NTIzNywiZXhwIjoxNTEyMjU4ODM3LCJuYW1lIjoiU3dldGhhIENoYW5kcmFzZWthciIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vLW1xZVRBSll4STFZL0FBQUFBQUFBQUFJL0FBQUFBQUFBQUFBL0FGaVlvZjF3ai1yTW82ZDkxS1FQZXI3Sm1vTnE2VkdWQVEvczk2LWMvcGhvdG8uanBnIiwiZ2l2ZW5fbmFtZSI6IlN3ZXRoYSIsImZhbWlseV9uYW1lIjoiQ2hhbmRyYXNla2FyIiwibG9jYWxlIjoiZW4ifQ.LNZfW3dHxc4x-J6YooFqrb2ybpobem6WoOxztE0AOMlrQIBSpYhSn6yUYsF7F4xgEDXLZFLG6qlLPBmQmeKeEMiDB85JRZ9dI6lbgqm-Hq1arqQCK58W3037c2MCwlvp7YwcssXtjRvJtDa0MArgBPVGJlGJ1zc6hluc_NtqOQxpa4-vD0h3Vgc2iiwEY-YeHNI5UZyIKFLrRgEthJCb4nrjkta3h9dexNizcnlYTph3BlyCVo8mb6G60NFQXcMc_iZNnzMcdg7uyui2vSdm5j82HC9smN-1YtfJjXXf9dPh_GuMOwHWAH_zn_lZNQ-xF9ors8k9grdIVDQVvBPMHg";
         var token = User.getToken(); 
-        alert(token);
         var file = $scope.file;
         var locationStr = $scope.location;
         fileOps.uploadWaterSource(file, locationStr, token).then(function() { 
@@ -214,8 +212,6 @@ app.controller('UploadController', ['$scope', 'fileOps', 'fileMeta', 'User' ,fun
           }, function(error) {
 
           alert('file upload failure');
-          alert(error);
-          alert(error.status);
           $scope.show_failure = true;
           $scope.message = error.status;
           });
