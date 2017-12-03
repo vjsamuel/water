@@ -342,7 +342,7 @@ app.controller('MainController', ['$scope','fileOps', 'fileMeta', 'User', functi
     $scope.initClient = function() {
         gapi.load('auth2', function () {
             $scope.auth2 = gapi.auth2.init({
-                client_id: '383780224553-22egovj732rdubo0fv5tf5fbu37to9ud.apps.googleusercontent.com'
+                client_id: '410143290104-uo4i3j4jg0o03kr8momlu3ro1ogg0vee.apps.googleusercontent.com'
             });
 
             var instance = gapi.auth2.getAuthInstance();
