@@ -207,13 +207,13 @@ app.controller('UploadController', ['$scope', 'fileOps', 'fileMeta', 'User' ,fun
         var locationStr = $scope.location;
         fileOps.uploadWaterSource(file, locationStr, token).then(function() { 
          // alert('file uploaded successfully');
-           $scope.message = file.file.name + " updated successfully.";
+           $scope.message = "water source is updated successfully.";
             $scope.show_success = true;
           }, function(error) {
 
          // alert('file upload failure');
           $scope.show_failure = true;
-          $scope.message = error.status;
+          $scope.message = "water source is not updated. failed with " + error.status;
           });
 
     };
@@ -241,7 +241,7 @@ app.controller('ViewUploadsController', ['$scope', 'fileOps', 'fileMeta', 'User'
             $scope.show_table = true;
             $scope.results = success.data;
         }, function() {
-            $scope.message = "Unable to list uploaded files. Please try logging in and try again.";
+            $scope.message = "Unable to list  all water sources. Please try logging in and try again.";
             $scope.show_failure = true;
         });
     };
@@ -264,11 +264,11 @@ app.controller('ViewUploadsController', ['$scope', 'fileOps', 'fileMeta', 'User'
 
     $scope.delete = function(file) {
         fileOps.deleteFile(file, User.getToken()).then(function(){
-            $scope.message = "File " + file + " deleted.";
+            $scope.message = "Water source: " + file + " deleted.";
             $scope.show_success = true;
             $scope.show_uploads()
         }, function() {
-            $scope.message = "Unable to delete file " + file + " .";
+            $scope.message = "Unable to delete water source " + file + " .";
             $scope.show_failure = true;
         })
     };
@@ -278,7 +278,7 @@ app.controller('ViewUploadsController', ['$scope', 'fileOps', 'fileMeta', 'User'
             var file = new Blob([response.data], { type: type });
             saveAs(file, filename);
         }, function() {
-            $scope.message = "Unable to get file " + filename + " .";
+            $scope.message = "Unable to download image of water source " + filename + " .";
             $scope.show_failure = true;
         })
     };
@@ -329,7 +329,7 @@ app.controller('MainController', ['$scope','fileOps', 'fileMeta', 'User', functi
            // $scope.positions = success.data;
             //alert('successful retrieval of water sources');
         }, function() {
-            $scope.message = "Unable to list uploaded files. Please try logging in and try again.";
+            $scope.message = "Unable to list water sources. Please try logging in and try again.";
             $scope.show_failure = true;
           //  alert('failure in retrieving water sources');
         });
