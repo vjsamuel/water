@@ -18,12 +18,11 @@
 <traffic-layer></traffic-layer>
 </ng-map> 
 </div>
-
- <div style="width: 30%; float:right; height: 100%">
-
- <table>
-<tr>
+<div style="width: 30%; float:right; height: 100%">
 <input type=button class="btn btn-default" ng-click="getAllWaterSources()" value="Click to Refresh"/>
+<div ng-if="showInfo">
+<table ng-if = "showInfo">
+<tr>
 </tr> 
 <tr>
  <img src = "{{image}}" height = "300" width = "300"> </td>
@@ -35,8 +34,8 @@
 {{comment}} 
 </tr><tr> {{lat}}</tr>
 <tr> 
- {{lng}} </tr>
- </table>
-
+{{lng}} </tr>
+</table>
+</div>
 </div>
 

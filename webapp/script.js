@@ -302,6 +302,7 @@ app.controller('MainController', ['$scope','fileOps', 'fileMeta', 'User', functi
     
     $scope.address = "current-location";
     $scope.positions = [];
+    $scope.showInfo = false;
     $scope.image = "";
     $scope.getMarkerInfo = function(events, marker) {
       var p = marker.$index;
@@ -311,6 +312,7 @@ app.controller('MainController', ['$scope','fileOps', 'fileMeta', 'User', functi
           imageName = key;
 
          }
+         $scope.showInfo = true;
          $scope.image =  "http://localhost:8080/api/v1/water/source/" + $scope.positions[p].data.id + "/image/" + imageName;
          $scope.comment = $scope.positions[p].data.comment;
          $scope.description = $scope.positions[p].data.description;
