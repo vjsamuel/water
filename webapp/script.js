@@ -167,6 +167,17 @@ app.service('fileOps', ['$http', function ($http) {
           method: 'GET'
           })
     };
+
+    this.getImageURL = function(urlPath) {
+      return $http({
+          url:urlPath,
+          method: 'GET',
+          responseType: 'arraybuffer',
+          headers: {
+            'Content-Type':'image/jpeg'
+          }
+       })
+    };
 }]);
 
 app.service('fileMeta', ['$http', function($http) {
@@ -273,14 +284,28 @@ app.controller('ViewUploadsController', ['$scope', 'fileOps', 'fileMeta', 'User'
         })
     };
 
-    $scope.download = function(filename, version, type) {
-        fileOps.getFile(filename, version, type, User.getToken()).then(function(response){
+    $scope.download = function(filename, id, type) {
+      fileOps.getWaterSource(id).then(function(success) {
+         var imageName = "";
+         for (var key in success.data.images) {
+          imageName = key;
+         }
+         var imageURL =  "http://localhost:8080/api/v1/water/source/" + id + "/image/" + imageName;
+         window.open(imageURL);
+         }, function() {
+            $scope.message = "Unable to open image of water source " + filename + " .";
+            $scope.show_failure = true;
+
+           // alert('failure GET request for given water source');
+        });
+
+       /* fileOps.getFile(filename, version, type, User.getToken()).then(function(response){
             var file = new Blob([response.data], { type: type });
             saveAs(file, filename);
         }, function() {
             $scope.message = "Unable to download image of water source " + filename + " .";
             $scope.show_failure = true;
-        })
+        })*/
     };
 
     if (User.getToken() !== "") {

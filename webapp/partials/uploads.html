@@ -19,7 +19,7 @@
                     <th>#</th>
                     <th>id</th>
                     <th>Location</th>
-                    <th>Download image</th>
+                    <th>view image</th>
                     <th>Description</th>
                     <th>comment</th>
                 </tr>
@@ -33,7 +33,7 @@
                         <div id="index-{{$index}}" class="btn-group" ng-click="open('index-' + $index)">
                             <button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
                             <ul class="dropdown-menu">
-                                <li><a href="#!/uploads" ng-click="download(result.file, result.version, result.type)">Download</a></li>
+                                <li><a href="#!/uploads" ng-click="download(result.file, result.id , result.type)">View image</a></li>
                                 <li><a href="#!/home">Update</a></li>
 
                                 <li class="divider"></li>
