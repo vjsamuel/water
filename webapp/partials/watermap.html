@@ -2,7 +2,7 @@
 <div style="width: 70%; float:left; height: 100%">
 <div class="form-group">
 
-<label for="description" class="control-label">Type an address to navigate to particular location</label>
+<label for="address" class="control-label">Type an address to navigate to particular location</label>
 <input ng-model="address" />
 </div> 
 <ng-map center="{{address}}" zoom="12" ng-init="getAllWaterSources()">
@@ -22,20 +22,35 @@
 <input type=button class="btn btn-default" ng-click="getAllWaterSources()" value="Click to Refresh"/>
 <div ng-if="showInfo">
 <table ng-if = "showInfo">
-<tr>
-</tr> 
-<tr>
- <img src = "{{image}}" height = "300" width = "300"> </td>
-</tr>
-<tr>
-{{description}} 
-</tr>
-<tr>
-{{comment}} 
-</tr><tr> {{lat}}</tr>
-<tr> 
-{{lng}} </tr>
+  <tr>
+    <td>
+      <img src = "{{image}}" height = "300" width = "300" border=10 alt="photo of the location uploaded by user"> </td>
+    </td>
+  </tr>
+  <tr>
+    <td>
+    Description: 
+      <label class="control-label">
+        {{description}} 
+      </label>
+    </td>
+  </tr>
+  <tr>
+    <td>
+    Comment:
+      <label class="control-label">
+        {{comment}} 
+      </label>
+    </td>
+  </tr>
+  <tr> 
+    <td>
+    Location:
+     <label class="control-label">
+        {{lat}},{{lng}}
+      </label>
+    </td>
+  </tr>
 </table>
 </div>
 </div>
-
