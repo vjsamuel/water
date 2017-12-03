@@ -206,12 +206,12 @@ app.controller('UploadController', ['$scope', 'fileOps', 'fileMeta', 'User' ,fun
         var file = $scope.file;
         var locationStr = $scope.location;
         fileOps.uploadWaterSource(file, locationStr, token).then(function() { 
-          alert('file uploaded successfully');
+         // alert('file uploaded successfully');
            $scope.message = file.file.name + " updated successfully.";
             $scope.show_success = true;
           }, function(error) {
 
-          alert('file upload failure');
+         // alert('file upload failure');
           $scope.show_failure = true;
           $scope.message = error.status;
           });
@@ -294,12 +294,12 @@ const LogOut = 'Log out';
 app.controller('MainController', ['$scope','fileOps', 'fileMeta', 'User', function($scope, fileOps, fileMeta, User,  NgMap) {
     $scope.state = LogIn;
     $scope.signedin = false;
-
     
     $scope.address = "current-location";
     $scope.positions = [];
     $scope.showInfo = false;
     $scope.image = "";
+
     $scope.getMarkerInfo = function(events, marker) {
       var p = marker.$index;
       fileOps.getWaterSource($scope.positions[p].data.id).then(function(success) {
@@ -315,9 +315,10 @@ app.controller('MainController', ['$scope','fileOps', 'fileMeta', 'User', functi
          $scope.lat = $scope.positions[p].data.location.Lat;
          $scope.lng = $scope.positions[p].data.location.Lng;
          }, function() {
-            alert('failure GET request for given water source');
+           // alert('failure GET request for given water source');
         });
     }
+    
     $scope.getAllWaterSources = function(event) {
      fileMeta.getFiles().then(function(success) {
             var count = 0;
@@ -326,14 +327,14 @@ app.controller('MainController', ['$scope','fileOps', 'fileMeta', 'User', functi
                count = count + 1;
             }
            // $scope.positions = success.data;
-            alert('successful retrieval of water sources');
+            //alert('successful retrieval of water sources');
         }, function() {
             $scope.message = "Unable to list uploaded files. Please try logging in and try again.";
             $scope.show_failure = true;
-            alert('failure in retrieving water sources');
+          //  alert('failure in retrieving water sources');
         });
 
-   };
+    };
     
     $scope.initClient = function() {
         gapi.load('auth2', function () {
