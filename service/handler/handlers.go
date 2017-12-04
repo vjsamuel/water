@@ -281,7 +281,7 @@ func (h *handler) UpdateFinding(w http.ResponseWriter, r *http.Request) {
 		Description: description,
 		Comment:     comment,
 		Image: common.Image{
-			File:        fmt.Sprintf("%d-%s", id, b.Filename),
+			File:        fmt.Sprintf("%s-%s", id, b.Filename),
 			ContentType: contentType,
 			Size:        length,
 		},

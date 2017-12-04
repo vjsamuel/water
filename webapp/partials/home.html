@@ -15,26 +15,22 @@
     <div class="col-lg-4 col-lg-offset-1">
         <form class="bs-component">
             <div class="form-group">
-                <label for="Name" class="control-label">Name:</label>
-                <input type="text" class="form-control input-sm" id="name" file-model="name">
+                <label for="description" class="control-label">Location Description</label>
+                <input type="text" class="form-control" id="description" ng-model="description" placeholder="optional description">
             </div>
 
             <div class="form-group">
-                <label for="Name" class="control-label">Location:</label>
-                <input type="text" class="form-control input-sm" ng-model="location" id="location" file-model="location">
+                <label for="location" class="control-label">Location:</label>
+                <input type="text" class="form-control input-sm" ng-model="location" id="location" file-model="location" value="{{location}}">
             </div>
 
-                <div class="form-group">
-                    <label for="file" class="control-label"> Upload Photo of the location</label>
-                    <input type="file" class="form-control input-sm" id="file" file-model="file.file">
-                </div>
-                <div class="form-group">
-                    <label for="description" class="control-label">Location Description</label>
-                    <input type="text" class="form-control" id="description" ng-model="file.description" placeholder="optional description">
-                </div>
+            <div class="form-group">
+                <label for="file" class="control-label"> Upload Photo of the location</label>
+                <input type="file" class="form-control input-sm" id="file" file-model="file.file">
+            </div>
 
             <div class="form-group">
-                <label for="Comments" class="control-label">Comments</label>
+                <label for="comments" class="control-label">Comments</label>
                 <input type="textarea" class="form-control" id="comments" ng-model="comments" placeholder="optional comments">
             </div>
 

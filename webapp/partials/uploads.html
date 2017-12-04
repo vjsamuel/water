@@ -34,11 +34,11 @@
                             <button class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
                             <ul class="dropdown-menu">
                                 <li><a href="#!/uploads" ng-click="download(result.file, result.id , result.type)">View image</a></li>
-                                <li><a href="#!/home">Update</a></li>
+                                <li><a href="#!/home?id={{result.id}}&location={{result.location.Lat}},{{result.location.Lng}}">Update</a></li>
 
                                 <li class="divider"></li>
 
-                                <li><a href="#!/uploads" style="color:#ff4136" ng-click="delete(result.file)"><strong>Delete</strong></a></li>
+                                <li><a href="#!/uploads" style="color:#ff4136" ng-click="delete(result.id)"><strong>Delete</strong></a></li>
                             </ul>
                         </div>
                     </td>

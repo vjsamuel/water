@@ -1,33 +1,33 @@
 <div class="row">
-<div class="col-lg-9">
-<div class="form-group">
-  <label for="address" class="control-label">Type an address to navigate to particular location</label>
-  <input ng-model="address" />
-</div>
-<input type=button class="btn btn-default" ng-click="getAllWaterSources()" value="Click to Refresh"/>
-<ng-map center="{{address}}" zoom="12" ng-init="getAllWaterSources()">
-  <marker position="{{address}}"></marker>
-  <marker
-    ng-repeat="pos in positions" position="{{pos.data.location.Lat}}, {{pos.data.location.Lng}}"
-    icon="{path:'CIRCLE', scale: 10, strokeColor: 'blue', zIndex:10}"
-    id="{{pos.index}}" on-click="getMarkerInfo(this)">
-  </marker>
+  <div class="col-lg-9">
+    <div class="form-group">
+      <label for="address" class="control-label">Type an address to navigate to particular location</label>
+      <input ng-model="address" />
+    </div>
+    <input type=button class="btn btn-default" ng-click="getAllWaterSources()" value="Click to Refresh"/>
+    <ng-map center="{{address}}" zoom="12" ng-init="getAllWaterSources()">
+      <marker position="{{address}}"></marker>
+      <marker
+        ng-repeat="pos in positions" position="{{pos.data.location.Lat}}, {{pos.data.location.Lng}}"
+        icon="{path:'CIRCLE', scale: 10, strokeColor: 'blue', zIndex:10}"
+        id="{{pos.index}}" on-click="getMarkerInfo(this)">
+      </marker>
 
-  <traffic-layer></traffic-layer>
-</ng-map>
-</div>
-<div class="col-lg-3">
-  <div ng-if="showInfo">
-      <div class="panel panel-primary">
-          <div class="panel-heading">
-              <h3 class="panel-title">{{description}}</h3>
-          </div>
-          <div class="panel-body">
-              <img src = "{{image}}" height = "250" width = "250" border=10 alt="photo of the location uploaded by user"/>
+      <traffic-layer></traffic-layer>
+    </ng-map>
+    </div>
+    <div class="col-lg-3">
+      <div ng-if="showInfo">
+          <div class="panel panel-primary">
+              <div class="panel-heading">
+                  <h3 class="panel-title">{{description !== 'undefined' ? description : ''}}</h3>
+              </div>
+              <div class="panel-body">
+                  <img src = "{{image}}" height = "250" width = "250" border=10 alt="photo of the location uploaded by user"/>
 
-              <p>{{comment}}</p>
+                  <p>{{comment !== 'undefined' ? comment : ''}}</p>
+              </div>
           </div>
-      </div>
-</div>
-</div>
+    </div>
+  </div>
 </div>
