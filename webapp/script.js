@@ -93,7 +93,7 @@ app.service('fileOps', ['$http', function ($http) {
         fd.append('comment', comment);
         fd.append('location', locationStr);
 
-        var uploadUrl = "http://localhost:8080/api/v1/water/source";
+        var uploadUrl = "/api/v1/water/source";
         var uploadMethod = "POST";
         if (id === '') {
             uploadUrl += "s";
@@ -118,7 +118,7 @@ app.service('fileOps', ['$http', function ($http) {
         var fd = new FormData();
         fd.append('file', file.file);
         fd.append('description', file.description);
-        var uploadUrl = "http://localhost:8080/api/v1/water/sources";
+        var uploadUrl = "/api/v1/water/sources";
         var uploadMethod = "POST";
         if (update == true) {
             uploadMethod = "PUT";
@@ -137,7 +137,7 @@ app.service('fileOps', ['$http', function ($http) {
     };
 
     this.deleteFile = function(file, token){
-        var filePath = "http://localhost:8080/api/v1/water/source/" + file;
+        var filePath = "/api/v1/water/source/" + file;
         return $http({
             url: filePath,
             method: 'DELETE',
@@ -149,7 +149,7 @@ app.service('fileOps', ['$http', function ($http) {
     };
 
     this.getFile = function(file, version, type, token){
-        var filePath = "http://localhost:8080/api/v1/water/sources" + file;
+        var filePath = "/api/v1/water/sources" + file;
         return $http({
             url: filePath,
             method: 'GET',
@@ -165,7 +165,7 @@ app.service('fileOps', ['$http', function ($http) {
     };
 
     this.getWaterSource = function(id) {
-      var urlPath = "http://localhost:8080/api/v1/water/source/" + id;
+      var urlPath = "/api/v1/water/source/" + id;
       return $http ({
           url: urlPath,
           method: 'GET'
@@ -185,14 +185,19 @@ app.service('fileOps', ['$http', function ($http) {
 }]);
 
 app.service('fileMeta', ['$http', function($http) {
-    this.getFiles = function() {
-        var filePath = "http://localhost:8080/api/v1/water/sources";
+    this.getFiles = function(token) {
+        var filePath = "/api/v1/water/sources";
+        var headers = {
+            'Content-Type': 'application/json'
+        }
+
+        if (token !== '' || token !== undefined) {
+            headers["X-CloudProject-Token"] = token
+        }
         return $http({
             url: filePath,
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: headers,
         })
     };
 }
@@ -277,6 +282,12 @@ app.controller('ViewUploadsController', ['$scope', 'fileOps', 'fileMeta', 'User'
     });
 
     $scope.show_uploads = function() {
+        var token =  User.getToken()
+        if (token === '') {
+            $scope.message = "Unable to list  all water sources. Please try logging in and try again.";
+            $scope.show_failure = true;
+            return;
+        }
         fileMeta.getFiles().then(function(success) {
             $scope.show_table = true;
             $scope.results = success.data;
@@ -319,7 +330,7 @@ app.controller('ViewUploadsController', ['$scope', 'fileOps', 'fileMeta', 'User'
          for (var key in success.data.images) {
           imageName = key;
          }
-         var imageURL =  "http://localhost:8080/api/v1/water/source/" + id + "/image/" + imageName;
+         var imageURL =  "/api/v1/water/source/" + id + "/image/" + imageName;
          window.open(imageURL);
          }, function() {
             $scope.message = "Unable to open image of water source " + filename + " .";
@@ -354,7 +365,7 @@ app.controller('MainController', ['$scope','fileOps', 'fileMeta', 'User', functi
 
          }
          $scope.showInfo = true;
-         $scope.image =  "http://localhost:8080/api/v1/water/source/" + $scope.positions[p].data.id + "/image/" + imageName;
+         $scope.image =  "/api/v1/water/source/" + $scope.positions[p].data.id + "/image/" + imageName;
          $scope.comment = $scope.positions[p].data.comment;
          $scope.description = $scope.positions[p].data.description;
          $scope.lat = $scope.positions[p].data.location.Lat;
@@ -365,7 +376,7 @@ app.controller('MainController', ['$scope','fileOps', 'fileMeta', 'User', functi
     }
     
     $scope.getAllWaterSources = function(event) {
-     fileMeta.getFiles().then(function(success) {
+     fileMeta.getFiles('').then(function(success) {
             var count = 0;
             for (var i in success.data) {
                $scope.positions.push({data:success.data[i] , index:count});

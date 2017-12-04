@@ -1,0 +1,7 @@
+specs/
+chatbot/
+function/
+.git
+.hg
+.svn
+service/token.json

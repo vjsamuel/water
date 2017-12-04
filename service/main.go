@@ -31,8 +31,8 @@ func main() {
 	pages.Path("/image/{image}").HandlerFunc(h.GetImage).Methods("GET")
 	r.Methods("GET").Path("/_ah/health").Handler(cache.NoCacheHandler(h.HealthCheck))
 
-	//fs := http.FileServer(http.Dir("../webapp"))
-	//r.Methods("GET").PathPrefix("/").Handler(fs)
+	fs := http.FileServer(http.Dir("../webapp"))
+	r.Methods("GET").PathPrefix("/").Handler(fs)
 
 	http.ListenAndServe(":8080", &CorsServer{r})
 }

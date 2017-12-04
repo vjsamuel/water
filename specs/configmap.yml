@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: water-config
+  namespace: project
+data:
+  MEMCACHE_SERVICE_HOST: "memcache-memcached"
+  MEMCACHE_SERVICE_PORT: "11211"
+  BUCKET: "cloud-project-1"
+  PROJECT_ID: "cloud-project-1-182204"

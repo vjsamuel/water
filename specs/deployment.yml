@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: water
+  name: water
+  namespace: project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: water
+  template:
+    metadata:
+      labels:
+        run: water
+    spec:
+      containers:
+      - image: gcr.io/cloud-project-1-182204/water:0.0.1
+        name: service
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        envFrom:
+        - configMapRef:
+            name: water-config
+

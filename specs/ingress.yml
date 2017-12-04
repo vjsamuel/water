@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: water
+  namespace: project
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "water"
+    kubernetes.io/ingress.allow-http: "false"
+spec:
+  tls:
+  - secretName: water-cert
+  backend:
+    serviceName: water
+    servicePort: 8080
+  rules:
+  - host: water.vjsamuel.me
+    http:
+      paths:
+      - backend: 
+          serviceName: water
+          servicePort: 8080
