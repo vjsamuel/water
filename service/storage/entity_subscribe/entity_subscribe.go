@@ -82,7 +82,7 @@ func (e *entityStore) Exists(holder common.Holder) bool {
 	return false
 }
 
-func (e *entityStore) List(holder common.Holder) (interface{}, error) {
+func (e *entityStore) List(_ common.Holder) (interface{}, error) {
 	query := datastore.NewQuery(subscribe_kind)
 	responses := []common.Subscription{}
 	_, err := e.client.GetAll(e.ctx, query, &responses)

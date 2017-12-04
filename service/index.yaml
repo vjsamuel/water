@@ -1,0 +1,8 @@
+indexes:
+- kind: Finding
+  ancestor: no
+  properties:
+  - name: id
+  - name: description
+  - name: comment
+  - name: location

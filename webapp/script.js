@@ -340,7 +340,7 @@ app.controller('SubscriptionController', ['$scope', 'fileOps', 'fileMeta', 'User
         var token = User.getToken();
         var phone = $scope.phone;
 
-        fileOps.subscribe(phone, token).then(function() {
+        fileOps.unSubscribe(phone, token).then(function() {
             $scope.message = "You have been successfully subscribed.";
             $scope.show_success = true;
         }, function(error) {
@@ -386,7 +386,7 @@ app.controller('ViewUploadsController', ['$scope', 'fileOps', 'fileMeta', 'User'
             $scope.show_failure = true;
             return;
         }
-        fileMeta.getFiles().then(function(success) {
+        fileMeta.getFiles(token).then(function(success) {
             $scope.show_table = true;
             $scope.results = success.data;
         }, function() {
@@ -400,7 +400,7 @@ app.controller('ViewUploadsController', ['$scope', 'fileOps', 'fileMeta', 'User'
         var units = ['bytes', 'kB', 'MB'],
         number = Math.floor(Math.log(bytes) / Math.log(1024));
         return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) +  ' ' + units[number];
-    }
+    };
 
     $scope.open = function(event) {
         var dropdown = angular.element(document.getElementById(event))

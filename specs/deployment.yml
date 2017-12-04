@@ -25,3 +25,29 @@ spec:
         - configMapRef:
             name: water-config
 
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: water-notifications
+  name: water-notifications
+  namespace: project
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: water-notifications
+  template:
+    metadata:
+      labels:
+        run: water-notifications
+    spec:
+      containers:
+      - image: gcr.io/cloud-project-1-182204/water-notifications:0.0.1
+        name: service
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        envFrom:
+        - configMapRef:
+            name: water-config
