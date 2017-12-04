@@ -129,14 +129,20 @@ func (m *Memcache) InsertList(holder common.Holder) error {
 
 func (m *Memcache) DeleteList(holder common.Holder) error {
 	id := all
-	if holder.User.Profile != "" {
-		id = fmt.Sprintf("%s/%s", id, all)
-	}
 
 	err := m.client.Delete(id)
 	if err != nil {
 		log.Printf("Unable to delete memcache key %s due to error %v\n", id, err)
 	}
+
+	if holder.User.Profile != "" {
+		id = fmt.Sprintf("%s/%s", id, all)
+		err = m.client.Delete(id)
+		if err != nil {
+			log.Printf("Unable to delete memcache key %s due to error %v\n", id, err)
+		}
+	}
+
 	return err
 }
 

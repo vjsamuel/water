@@ -11,6 +11,7 @@ type Holder struct {
 	Location    datastore.GeoPoint
 	Distance    int
 	Object      interface{}
+	Phone       string
 }
 
 type Image struct {

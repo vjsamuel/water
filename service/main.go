@@ -22,6 +22,11 @@ func main() {
 	v1.Path("/sources").Handler(cache.NoCacheHandler(h.GetFindings)).Methods("GET")
 	v1.Path("/sources").Handler(a.AuthenticatedHandler(h.SubmitFinding)).Methods("POST")
 
+	v1.Path("/subscribe").Handler(a.AuthenticatedHandler(h.Subscribe)).Methods("POST")
+	v1.Path("/subscribe").Handler(a.AuthenticatedHandler(h.Unsubscribe)).Methods("DELETE")
+	v1.Path("/subscribe").Handler(a.AuthenticatedHandler(h.Subscription)).Methods("GET")
+
+
 	source := v1.PathPrefix("/source").Subrouter()
 	source.Path("/{id}").Handler(a.AuthenticatedHandler(h.UpdateFinding)).Methods("PUT")
 	source.Path("/{id}").Handler(a.AuthenticatedHandler(h.DeleteFinding)).Methods("DELETE")

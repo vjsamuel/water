@@ -23,11 +23,13 @@ import (
 	"github.com/vjsamuel/water/service/storage"
 	"github.com/vjsamuel/water/service/storage/entity"
 	"github.com/vjsamuel/water/service/storage/object"
+	"github.com/vjsamuel/water/service/storage/entity_subscribe"
 )
 
 type handler struct {
 	object storage.Storage
 	entity storage.Storage
+	sub    storage.Storage
 	psub   *pubsub.PubSub
 	users  *cache.EvictableMap
 	mcache *memcache.Memcache
@@ -53,6 +55,11 @@ func NewHandler(users *cache.EvictableMap) *handler {
 		log.Fatal("Unable to create pubsub client")
 	}
 
+	sub := entity_subscribe.NewEntityStorage(projectId, ctx)
+	if e == nil {
+		log.Fatal("Unable to create subscription datastore client")
+	}
+
 	host := os.Getenv("MEMCACHE_SERVICE_HOST")
 	if host == "" {
 		host = "localhost"
@@ -65,7 +72,7 @@ func NewHandler(users *cache.EvictableMap) *handler {
 
 	mcache := memcache.NewMemcacheStorage(host, port)
 
-	return &handler{object: o, users: users, entity: e, psub: p, mcache: mcache, s: sonyflake.NewSonyflake(sonyflake.Settings{})}
+	return &handler{object: o, users: users, entity: e, psub: p, mcache: mcache,  sub: sub, s: sonyflake.NewSonyflake(sonyflake.Settings{})}
 }
 
 func (h *handler) GetFindings(w http.ResponseWriter, r *http.Request) {
@@ -453,6 +460,93 @@ func (h *handler) DeleteFinding(w http.ResponseWriter, r *http.Request) {
 	h.mcache.Delete(holder)
 	h.mcache.DeleteList(holder)
 	w.WriteHeader(http.StatusOK)
+}
+
+func (h *handler) Subscribe(w http.ResponseWriter, r *http.Request) {
+	usr := h.getUserFromRequest(r)
+	if usr == nil {
+		http.Error(w, "Unable to process request", http.StatusInternalServerError)
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	subscription := common.Subscription{}
+
+	err := decoder.Decode(&subscription)
+	if err != nil {
+		http.Error(w, "Unable to process request", http.StatusInternalServerError)
+		return
+	}
+
+	defer r.Body.Close()
+	holder := common.Holder{
+		User: *usr,
+		Phone: subscription.Phone,
+	}
+
+	err = h.sub.Insert(holder)
+	if err != nil {
+		http.Error(w, "Unable to subscribe", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func (h *handler) Unsubscribe(w http.ResponseWriter, r *http.Request) {
+	usr := h.getUserFromRequest(r)
+	if usr == nil {
+		http.Error(w, "Unable to process request", http.StatusInternalServerError)
+		return
+	}
+
+	holder := common.Holder{
+		User: *usr,
+	}
+
+	err := h.sub.Delete(holder)
+	if err != nil {
+		http.Error(w, "Unable to unsubscribe", http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func (h *handler) Subscription(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Cache-Control", "no-store")
+	usr := h.getUserFromRequest(r)
+	fmt.Println(r)
+	if usr == nil {
+		fmt.Println("here")
+		http.Error(w, "Unable to process request", http.StatusInternalServerError)
+		return
+	}
+
+	holder := common.Holder{
+		User: *usr,
+	}
+
+	rawSub, err := h.sub.Get(holder)
+	if err != nil {
+		http.Error(w, "Unable to get subscription", http.StatusInternalServerError)
+		return
+	}
+
+	if rawSub == nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	resp, _ := rawSub.(common.Subscription)
+	bytes, err := json.Marshal(resp)
+
+	if err != nil {
+		http.Error(w, "Unable to get subscription info", http.StatusInternalServerError)
+		return
+	}
+
+	fmt.Fprintf(w, "%s", string(bytes))
 }
 
 func (h *handler) HealthCheck(w http.ResponseWriter, r *http.Request) {

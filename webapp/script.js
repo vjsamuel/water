@@ -45,7 +45,8 @@ app.config(function($routeProvider) {
             templateUrl : '/partials/watermap.html'
         })
         .when('/subscribers', {
-            templateUrl : '/partials/subscribers.html'
+            templateUrl : '/partials/subscribers.html',
+            controller: 'SubscriptionController'
         })
 
 });
@@ -182,6 +183,47 @@ app.service('fileOps', ['$http', function ($http) {
           }
        })
     };
+
+    this.subscribe = function(phone, token) {
+        var uploadUrl = "/api/v1/water/subscribe";
+        var uploadMethod = "POST";
+        var payload = {
+          phone: phone
+        };
+        return $http({
+            url: uploadUrl,
+            data: JSON.stringify(payload),
+            method: uploadMethod,
+            transformRequest: angular.identity,
+            headers: {
+                'x-cloudproject-token' : token,
+                'Content-Type': 'application/json'
+            }
+        })
+    };
+
+    this.getSubscription = function(token) {
+        var urlPath = "/api/v1/water/subscribe";
+        return $http ({
+            headers: {
+                'X-CloudProject-Token': token
+            },
+            url: urlPath,
+            method: 'GET'
+        })
+    };
+
+    this.unSubscribe = function(token){
+        var filePath = "/api/v1/water/subscribe";
+        return $http({
+            url: filePath,
+            method: 'DELETE',
+            headers: {
+                'X-CloudProject-Token': token,
+                'Content-Type': 'application/json'
+            }
+        })
+    };
 }]);
 
 app.service('fileMeta', ['$http', function($http) {
@@ -210,7 +252,10 @@ app.controller('UploadController', ['$scope', '$routeParams', 'fileOps', 'fileMe
 
     $scope.show_success = false;
     $scope.show_failure = false;
+    $scope.description = '';
+    $scope.comment = '';
     $scope.id = '';
+
     $scope.getLocation = function () {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition($scope.showPosition);
@@ -261,6 +306,59 @@ app.controller('UploadController', ['$scope', '$routeParams', 'fileOps', 'fileMe
           $scope.message = "water source is not updated. failed with " + error.status;
           });
 
+    };
+
+    $scope.reset();
+}]);
+
+app.controller('SubscriptionController', ['$scope', 'fileOps', 'fileMeta', 'User' ,function($scope, fileOps, fileMeta, User) {
+    $scope.empty = {};
+
+    $scope.show_success = false;
+    $scope.show_failure = false;
+    $scope.phone = '';
+
+    $scope.reset = function() {
+        $scope.file = angular.copy($scope.empty);
+    };
+
+    $scope.close = function() {
+        $scope.show_success = false;
+        $scope.show_failure = false;
+    };
+
+    $scope.getSubscription = function() {
+        var token = User.getToken();
+        fileOps.getSubscription(token).then(function(success) {
+            $scope.phone = success.data.phone;
+        }, function() {
+            $scope.phone = '';
+        });
+    };
+
+    $scope.subscribe = function() {
+        var token = User.getToken();
+        var phone = $scope.phone;
+
+        fileOps.subscribe(phone, token).then(function() {
+            $scope.message = "You have been successfully subscribed.";
+            $scope.show_success = true;
+        }, function(error) {
+            $scope.show_failure = true;
+            $scope.message = "Unable to subscribe. failed with " + error.status;
+        });
+
+    };
+
+    $scope.unsubscribe = function() {
+        var token = User.getToken();
+        fileOps.unsubscribe(token).then(function(success) {
+            $scope.message = "You have been successfully unsubscribed.";
+            $scope.show_success = true;
+        }, function() {
+            $scope.show_failure = true;
+            $scope.message = "Unable to unsubscribe. failed with " + error.status;
+        });
     };
 
     $scope.reset();

@@ -39,3 +39,7 @@ type Response struct {
 	Comment     string             `json:"comment"`
 	Location    datastore.GeoPoint `json:"location"`
 }
+
+type Subscription struct {
+	Phone          string             `datastore:"phone" json:"phone"`
+}
