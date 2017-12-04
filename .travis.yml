@@ -28,7 +28,7 @@ jobs:
       stage: test
 
 script:
-  - go build $TARGETS
+  - go build github.com/vjsamuel/water/$TARGETS
 
 addons:
   apt:
