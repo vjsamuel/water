@@ -24,6 +24,10 @@ import (
 	"github.com/vjsamuel/water/service/storage/entity"
 	"github.com/vjsamuel/water/service/storage/object"
 	"github.com/vjsamuel/water/service/storage/entity_subscribe"
+
+	vision "cloud.google.com/go/vision/apiv1"
+	con1 "golang.org/x/net/context"
+	"bytes"
 )
 
 type handler struct {
@@ -33,6 +37,7 @@ type handler struct {
 	psub   *pubsub.PubSub
 	users  *cache.EvictableMap
 	mcache *memcache.Memcache
+	vis    *vision.ImageAnnotatorClient
 	s      *sonyflake.Sonyflake
 }
 
@@ -72,7 +77,13 @@ func NewHandler(users *cache.EvictableMap) *handler {
 
 	mcache := memcache.NewMemcacheStorage(host, port)
 
-	return &handler{object: o, users: users, entity: e, psub: p, mcache: mcache,  sub: sub, s: sonyflake.NewSonyflake(sonyflake.Settings{})}
+	vis, err := vision.NewImageAnnotatorClient(con1.Background())
+	if err != nil {
+		log.Fatal("Unable to create vision client")
+	}
+
+
+	return &handler{object: o, users: users, entity: e, psub: p, mcache: mcache,  sub: sub, s: sonyflake.NewSonyflake(sonyflake.Settings{}), vis: vis}
 }
 
 func (h *handler) GetFindings(w http.ResponseWriter, r *http.Request) {
@@ -187,8 +198,9 @@ func (h *handler) SubmitFinding(w http.ResponseWriter, r *http.Request) {
 	description := r.FormValue("description")
 	comment := r.FormValue("comment")
 	latlongStr := r.FormValue("location")
+	content, _ := ioutil.ReadAll(a)
 
-	point, err := h.getGeoPoint(w, latlongStr)
+	point, err := h.getGeoPoint(w, latlongStr, ioutil.NopCloser(bytes.NewReader(content)))
 	if err != nil {
 		log.Println(err)
 		return
@@ -210,7 +222,7 @@ func (h *handler) SubmitFinding(w http.ResponseWriter, r *http.Request) {
 			Size:        length,
 		},
 		User:        *usr,
-		Object:      a,
+		Object:      ioutil.NopCloser(bytes.NewReader(content)),
 		Description: description,
 		Comment:     comment,
 		Location:    *point,
@@ -269,12 +281,14 @@ func (h *handler) UpdateFinding(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	content, _ := ioutil.ReadAll(a)
+
 	description := r.FormValue("description")
 	comment := r.FormValue("comment")
 
 	latlongStr := r.FormValue("location")
 
-	point, err := h.getGeoPoint(w, latlongStr)
+	point, err := h.getGeoPoint(w, latlongStr, ioutil.NopCloser(bytes.NewReader(content)))
 	if err != nil {
 		log.Println(err)
 		return
@@ -284,7 +298,7 @@ func (h *handler) UpdateFinding(w http.ResponseWriter, r *http.Request) {
 	holder := common.Holder{
 		Id:          id,
 		User:        *usr,
-		Object:      a,
+		Object:      ioutil.NopCloser(bytes.NewReader(content)),
 		Description: description,
 		Comment:     comment,
 		Image: common.Image{
@@ -558,8 +572,29 @@ func (h *handler) getUserFromRequest(r *http.Request) *common.User {
 	return h.users.Get(token)
 }
 
-func (h *handler) getGeoPoint(w http.ResponseWriter, latlongStr string) (*datastore.GeoPoint, error) {
+func (h *handler) getGeoPoint(w http.ResponseWriter, latlongStr string, f io.Reader) (*datastore.GeoPoint, error) {
 	if latlongStr == "" {
+		image, err := vision.NewImageFromReader(f)
+		if err == nil {
+			annotations, err := h.vis.DetectLandmarks(con1.Background(), image, nil, 1)
+			if err == nil {
+				if len(annotations) == 1 {
+					return &datastore.GeoPoint{
+						annotations[0].Locations[0].LatLng.Latitude,
+						annotations[0].Locations[0].LatLng.Longitude,
+					}, nil
+				} else {
+					log.Println("No landmarks found")
+				}
+			} else {
+				log.Println("No landmarks found")
+			}
+		}
+
+		seeker, ok := f.(io.Seeker)
+		if ok {
+			seeker.Seek(0, 0)
+		}
 		http.Error(w, "Location is mandatory", http.StatusBadRequest)
 		return nil, fmt.Errorf("location is a mandatory parameter")
 	}
