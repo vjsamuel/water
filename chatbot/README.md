@@ -1,6 +1,6 @@
 
-Google Chatbot
-Chat bots are computer programs that mimic conversation with people using artificial intelligence. We are using the google chatbot as part of our project where the user can interact with the application via text or voice to find the closest water resource.
+Chatbots
+are computer programs that mimic conversation with people using artificial intelligence. We are using the google chatbot as part of our project where the user can interact with the application via text or voice to find the closest water resource.
 1.	Using the Actions on Google Console and create a new project. 
 2.	Under Build a custom app, click BUILD in the Dialogflow box and then click Create Actions on Dialogflow.
 3.	Click Save to save the project.
