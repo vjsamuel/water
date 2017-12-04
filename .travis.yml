@@ -18,13 +18,12 @@ jobs:
       go: $GO_VERSION
       stage: check
 
-    # Collectbeat
     - os: linux
       env: TARGETS="service"
       go: $GO_VERSION
       stage: test
-    - os: osx
-      env: TARGETS="webapp"
+    - os: linux
+      env: TARGETS="notifications"
       go: $GO_VERSION
       stage: test
 
