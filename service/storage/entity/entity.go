@@ -185,7 +185,7 @@ func (e *entityStore) listByQuery(query *datastore.Query) ([]common.Response, er
 			Location:    entity.Location,
 		}
 
-		imgQuery := datastore.NewQuery(file_kind).Ancestor(keys[0])
+		imgQuery := datastore.NewQuery(file_kind).Ancestor(keys[i])
 		files := []common.File{}
 		imgKeys, err := e.client.GetAll(e.ctx, imgQuery, &files)
 		if err != nil {
