@@ -19,6 +19,10 @@
     "angular-route": "^1.6.6",
     "file-saver": "^1.3.3",
     "angular-bootstrap": "^2.5.0",
-    "angular": "^1.6.6"
+    "angular": "^1.6.6",
+    "ngmap": "^1.18.4"
+  },
+  "resolutions": {
+    "webcomponentsjs": "^0.6.0"
   }
 }

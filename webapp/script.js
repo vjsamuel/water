@@ -1,15 +1,15 @@
-var app = angular.module('app', ['ui.bootstrap', 'ngRoute']);
+var app = angular.module('app', ['ui.bootstrap', 'ngRoute', 'ngMap']);
 
-    app.controller('myCtrl', ['$scope', function($scope) {
-        $scope.count = 0;
-        $scope.myFunc = function() {
-            $scope.count++;
+app.controller('myCtrl', ['$scope', function($scope) {
+    $scope.count = 0;
+    $scope.myFunc = function() {
+        $scope.count++;
 
-        };
-    }]);
+    };
+}]);
 
 //image
-    app.controller("MainController", function ($scope) {
+    app.controller("MainController", function ($scope, NgMap) {
         var water = {
             name: "Waterdrop",
             path: "/Images/waterdrop.jpg"
@@ -42,7 +42,7 @@ app.config(function($routeProvider) {
             controller: 'ViewUploadsController'
         })
         .when('/map', {
-            templateUrl : '/partials/map.html'
+            templateUrl : '/partials/watermap.html'
         })
         .when('/subscribers', {
             templateUrl : '/partials/subscribers.html'
@@ -86,15 +86,40 @@ app.directive('fileModel', ['$parse', function ($parse) {
 }]);
 
 app.service('fileOps', ['$http', function ($http) {
+     this.uploadWaterSource = function(file, locationStr, token) {
+        var fd = new FormData();
+       // alert('trying to upload water source');
+        fd.append('file', file.file);
+       // alert(file.file);
+        fd.append('description', '');
+        fd.append('comment', '');
+        fd.append('location', locationStr);
+      //  alert('location' + locationStr);
+        var uploadUrl = "http://localhost:8080/api/v1/water/sources";
+        var uploadMethod = "POST";
+       // alert(token);
+        return $http({
+            url: uploadUrl,
+            data: fd,
+            method: uploadMethod,
+            transformRequest: angular.identity,
+            headers: {
+                'x-cloudproject-token' : token,
+                'Content-Type': undefined
+            }
+        })
+    };
+
     this.uploadFile = function(file, update, token) {
         var fd = new FormData();
         fd.append('file', file.file);
         fd.append('description', file.description);
-        var uploadUrl = "/api/v1/files";
+        var uploadUrl = "http://localhost:8080/api/v1/water/sources";
         var uploadMethod = "POST";
-        if (update === true) {
+        if (update == true) {
             uploadMethod = "PUT";
         }
+       // alert(token);
         return $http({
             url: uploadUrl,
             data: fd,
@@ -108,7 +133,7 @@ app.service('fileOps', ['$http', function ($http) {
     };
 
     this.deleteFile = function(file, token){
-        var filePath = "/api/v1/file/" + file;
+        var filePath = "http://localhost:8080/api/v1/water/source/" + file;
         return $http({
             url: filePath,
             method: 'DELETE',
@@ -120,7 +145,7 @@ app.service('fileOps', ['$http', function ($http) {
     };
 
     this.getFile = function(file, version, type, token){
-        var filePath = "/api/v1/file/" + file;
+        var filePath = "http://localhost:8080/api/v1/water/sources" + file;
         return $http({
             url: filePath,
             method: 'GET',
@@ -134,28 +159,34 @@ app.service('fileOps', ['$http', function ($http) {
             }
         })
     };
+
+    this.getWaterSource = function(id) {
+      var urlPath = "http://localhost:8080/api/v1/water/source/" + id;
+      return $http ({
+          url: urlPath,
+          method: 'GET'
+          })
+    };
+
+    this.getImageURL = function(urlPath) {
+      return $http({
+          url:urlPath,
+          method: 'GET',
+          responseType: 'arraybuffer',
+          headers: {
+            'Content-Type':'image/jpeg'
+          }
+       })
+    };
 }]);
 
 app.service('fileMeta', ['$http', function($http) {
-    this.getFileInfo = function(name, token) {
-        var filePath = "/api/v1/file/" + name + "/info";
+    this.getFiles = function() {
+        var filePath = "http://localhost:8080/api/v1/water/sources";
         return $http({
             url: filePath,
             method: 'GET',
             headers: {
-                'X-CloudProject-Token': token,
-                'Content-Type': 'application/json'
-            }
-        })
-    };
-
-    this.getFiles = function(token) {
-        var filePath = "/api/v1/files";
-        return $http({
-            url: filePath,
-            method: 'GET',
-            headers: {
-                'X-CloudProject-Token': token,
                 'Content-Type': 'application/json'
             }
         })
@@ -163,6 +194,7 @@ app.service('fileMeta', ['$http', function($http) {
 }
 
 ]);
+
 
 app.controller('UploadController', ['$scope', 'fileOps', 'fileMeta', 'User' ,function($scope, fileOps, fileMeta, User) {
     $scope.empty = {};
@@ -179,31 +211,21 @@ app.controller('UploadController', ['$scope', 'fileOps', 'fileMeta', 'User' ,fun
     };
 
     $scope.upload = function() {
+       // alert('i am here');
+        //var token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjY4MjQxMjMxYmJmMGRmOGY5MTIzZDAxOGNmOWU2MDFlMmFhMzY3M2EifQ.eyJhenAiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDg4MTgwOTY0MDc1NTMzMDI1MjQiLCJhdF9oYXNoIjoiTS1UVmUxUlhtNzg2MlhXZFROY2FpdyIsImlzcyI6Imh0dHBzOi8vYWNjb3VudHMuZ29vZ2xlLmNvbSIsImlhdCI6MTUxMjI1NTIzNywiZXhwIjoxNTEyMjU4ODM3LCJuYW1lIjoiU3dldGhhIENoYW5kcmFzZWthciIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vLW1xZVRBSll4STFZL0FBQUFBQUFBQUFJL0FBQUFBQUFBQUFBL0FGaVlvZjF3ai1yTW82ZDkxS1FQZXI3Sm1vTnE2VkdWQVEvczk2LWMvcGhvdG8uanBnIiwiZ2l2ZW5fbmFtZSI6IlN3ZXRoYSIsImZhbWlseV9uYW1lIjoiQ2hhbmRyYXNla2FyIiwibG9jYWxlIjoiZW4ifQ.LNZfW3dHxc4x-J6YooFqrb2ybpobem6WoOxztE0AOMlrQIBSpYhSn6yUYsF7F4xgEDXLZFLG6qlLPBmQmeKeEMiDB85JRZ9dI6lbgqm-Hq1arqQCK58W3037c2MCwlvp7YwcssXtjRvJtDa0MArgBPVGJlGJ1zc6hluc_NtqOQxpa4-vD0h3Vgc2iiwEY-YeHNI5UZyIKFLrRgEthJCb4nrjkta3h9dexNizcnlYTph3BlyCVo8mb6G60NFQXcMc_iZNnzMcdg7uyui2vSdm5j82HC9smN-1YtfJjXXf9dPh_GuMOwHWAH_zn_lZNQ-xF9ors8k9grdIVDQVvBPMHg";
+        var token = User.getToken(); 
         var file = $scope.file;
-        fileMeta.getFileInfo(file.file.name, User.getToken()).then(function() {
-            fileOps.uploadFile(file, true, User.getToken()).then(function() {
-                $scope.message = file.file.name + " updated successfully.";
-                $scope.show_success = true;
-            }, function() {
-                $scope.message = file.file.name + " update failed. Please try logging in and try again.";
-                $scope.show_failure = true;
-            });
-        }, function() {
-            fileOps.uploadFile(file, false, User.getToken()).then(function() {
-                $scope.message = file.file.name + " uploaded successfully.";
-                $scope.show_success = true;
-            }, function(error) {
-                if (error.status ==  403) {
-                    $scope.message = file.file.name + " upload failed. Please login and try again.";
-                } else if (error.status == 400) {
-                    $scope.message = file.file.name + " upload failed as file is bigger than 10MB."
-                } else {
-                    $scope.message = file.file.name + " upload failed. Please try again."
-                }
+        var locationStr = $scope.location;
+        fileOps.uploadWaterSource(file, locationStr, token).then(function() { 
+         // alert('file uploaded successfully');
+           $scope.message = "water source is updated successfully.";
+            $scope.show_success = true;
+          }, function(error) {
 
-                $scope.show_failure = true;
-            });
-        })
+         // alert('file upload failure');
+          $scope.show_failure = true;
+          $scope.message = "water source is not updated. failed with " + error.status;
+          });
 
     };
 
@@ -226,11 +248,11 @@ app.controller('ViewUploadsController', ['$scope', 'fileOps', 'fileMeta', 'User'
     });
 
     $scope.show_uploads = function() {
-        fileMeta.getFiles(User.getToken()).then(function(success) {
+        fileMeta.getFiles().then(function(success) {
             $scope.show_table = true;
             $scope.results = success.data;
         }, function() {
-            $scope.message = "Unable to list uploaded files. Please try logging in and try again.";
+            $scope.message = "Unable to list  all water sources. Please try logging in and try again.";
             $scope.show_failure = true;
         });
     };
@@ -253,23 +275,37 @@ app.controller('ViewUploadsController', ['$scope', 'fileOps', 'fileMeta', 'User'
 
     $scope.delete = function(file) {
         fileOps.deleteFile(file, User.getToken()).then(function(){
-            $scope.message = "File " + file + " deleted.";
+            $scope.message = "Water source: " + file + " deleted.";
             $scope.show_success = true;
             $scope.show_uploads()
         }, function() {
-            $scope.message = "Unable to delete file " + file + " .";
+            $scope.message = "Unable to delete water source " + file + " .";
             $scope.show_failure = true;
         })
     };
 
-    $scope.download = function(filename, version, type) {
-        fileOps.getFile(filename, version, type, User.getToken()).then(function(response){
+    $scope.download = function(filename, id, type) {
+      fileOps.getWaterSource(id).then(function(success) {
+         var imageName = "";
+         for (var key in success.data.images) {
+          imageName = key;
+         }
+         var imageURL =  "http://localhost:8080/api/v1/water/source/" + id + "/image/" + imageName;
+         window.open(imageURL);
+         }, function() {
+            $scope.message = "Unable to open image of water source " + filename + " .";
+            $scope.show_failure = true;
+
+           // alert('failure GET request for given water source');
+        });
+
+       /* fileOps.getFile(filename, version, type, User.getToken()).then(function(response){
             var file = new Blob([response.data], { type: type });
             saveAs(file, filename);
         }, function() {
-            $scope.message = "Unable to get file " + filename + " .";
+            $scope.message = "Unable to download image of water source " + filename + " .";
             $scope.show_failure = true;
-        })
+        })*/
     };
 
     if (User.getToken() !== "") {
@@ -280,13 +316,55 @@ app.controller('ViewUploadsController', ['$scope', 'fileOps', 'fileMeta', 'User'
 const LogIn = 'Log in';
 const LogOut = 'Log out';
 
-app.controller('MainController', ['$scope', 'User' ,function($scope, User) {
+app.controller('MainController', ['$scope','fileOps', 'fileMeta', 'User', function($scope, fileOps, fileMeta, User,  NgMap) {
     $scope.state = LogIn;
     $scope.signedin = false;
+    
+    $scope.address = "current-location";
+    $scope.positions = [];
+    $scope.showInfo = false;
+    $scope.image = "";
+
+    $scope.getMarkerInfo = function(events, marker) {
+      var p = marker.$index;
+      fileOps.getWaterSource($scope.positions[p].data.id).then(function(success) {
+         var imageName = "";
+         for (var key in success.data.images) {
+          imageName = key;
+
+         }
+         $scope.showInfo = true;
+         $scope.image =  "http://localhost:8080/api/v1/water/source/" + $scope.positions[p].data.id + "/image/" + imageName;
+         $scope.comment = $scope.positions[p].data.comment;
+         $scope.description = $scope.positions[p].data.description;
+         $scope.lat = $scope.positions[p].data.location.Lat;
+         $scope.lng = $scope.positions[p].data.location.Lng;
+         }, function() {
+           // alert('failure GET request for given water source');
+        });
+    }
+    
+    $scope.getAllWaterSources = function(event) {
+     fileMeta.getFiles().then(function(success) {
+            var count = 0;
+            for (var i in success.data) {
+               $scope.positions.push({data:success.data[i] , index:count});
+               count = count + 1;
+            }
+           // $scope.positions = success.data;
+            //alert('successful retrieval of water sources');
+        }, function() {
+            $scope.message = "Unable to list water sources. Please try logging in and try again.";
+            $scope.show_failure = true;
+          //  alert('failure in retrieving water sources');
+        });
+
+    };
+    
     $scope.initClient = function() {
         gapi.load('auth2', function () {
             $scope.auth2 = gapi.auth2.init({
-                client_id: '383780224553-22egovj732rdubo0fv5tf5fbu37to9ud.apps.googleusercontent.com'
+                client_id: '410143290104-uo4i3j4jg0o03kr8momlu3ro1ogg0vee.apps.googleusercontent.com'
             });
 
             var instance = gapi.auth2.getAuthInstance();
@@ -333,6 +411,6 @@ app.controller('MainController', ['$scope', 'User' ,function($scope, User) {
     $scope.initClient()
 
 
-
+  // ng-map
 
 }]);
